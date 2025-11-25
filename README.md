@@ -59,6 +59,7 @@ Vulnora AI consists of modular components:
 
 3.  **Install dependencies**:
     ```bash
+    cd server
     pip install -r requirements.txt
     ```
 
@@ -71,6 +72,8 @@ Vulnora AI runs as two separate processes: the Backend API and the Dashboard.
 ### 1. Start the Backend API
 The API handles the heavy lifting of scanning and analysis.
 ```bash
+```bash
+cd server
 python main.py api
 ```
 *Server starts at `http://0.0.0.0:8000`*
@@ -78,6 +81,8 @@ python main.py api
 ### 2. Start the Dashboard (Streamlit)
 The Dashboard provides the visual interface. Open a new terminal:
 ```bash
+```bash
+cd server
 source .venv/bin/activate
 python main.py dashboard
 ```
@@ -105,17 +110,18 @@ npm run dev
 
 ```
 Vulnora-AI/
-├── main.py              # Entry point for API and Dashboard
-├── requirements.txt     # Python dependencies
-├── vulnora/
-│   ├── api/             # FastAPI application
-│   ├── core/            # Core logic (Scanner, Taint Analysis, LLM)
-│   ├── dashboard/       # Streamlit UI
-│   ├── models/          # Pydantic data models
-│   └── utils/           # Helper functions
 ├── client/              # React + Vite Frontend
 │   ├── src/             # React source code
 │   └── vite.config.js   # Vite configuration
+├── server/              # Python Backend
+│   ├── main.py          # Entry point for API and Dashboard
+│   ├── requirements.txt # Python dependencies
+│   └── vulnora/         # Main package directory
+│       ├── api/         # FastAPI application
+│       ├── core/        # Core logic (Scanner, Taint Analysis, LLM)
+│       ├── dashboard/   # Streamlit UI
+│       ├── models/      # Pydantic data models
+│       └── utils/       # Helper functions
 └── test_project/        # Sample vulnerable project for testing
 ```
 

@@ -18,3 +18,4 @@ class ScanResult(BaseModel):
     issues: List[IssueCandidate]
     smell_score: float = 0.0
     scan_duration: float = 0.0
+    files_scanned: int = 0

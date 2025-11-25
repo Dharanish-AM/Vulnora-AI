@@ -31,13 +31,14 @@ if scan_button and project_path:
                 
                 if response.status_code == 200:
                     result = response.json()
+                    st.write(result)
                     st.success(f"Scan completed in {result['scan_duration']} seconds!")
                     
                     # Metrics
                     col1, col2, col3 = st.columns(3)
                     col1.metric("Total Issues", len(result['issues']))
                     col2.metric("Smell Score", result['smell_score'])
-                    col3.metric("Files Scanned", "N/A") # API doesn't return this yet, but could
+                    col3.metric("Files Scanned", result.get('files_scanned', 0))
                     
                     # Issues Table
                     if result['issues']:

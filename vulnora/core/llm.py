@@ -1,7 +1,10 @@
 import requests
 import json
+import logging
 from typing import Dict, Any, Optional
 from vulnora.models.issue import IssueCandidate
+
+logger = logging.getLogger("vulnora.llm")
 
 class LLMValidator:
     def __init__(self, model: str = "llama3.1:8b", host: str = "http://localhost:11434"):
@@ -27,6 +30,8 @@ class LLMValidator:
                 result = response.json()
                 analysis = json.loads(result.get("response", "{}"))
                 
+                logger.debug(f"LLM Response: {analysis}")
+
                 # Update issue with LLM insights
                 if analysis.get("confidence"):
                     issue.confidence = analysis["confidence"]
@@ -36,9 +41,11 @@ class LLMValidator:
                     issue.description = analysis["description"]
                 if analysis.get("suggested_fix"):
                     issue.suggested_fix = analysis["suggested_fix"]
+            else:
+                logger.error(f"LLM API Error: {response.status_code} - {response.text}")
                     
         except Exception as e:
-            print(f"LLM Validation failed: {e}")
+            logger.error(f"LLM Validation failed: {e}")
             
         return issue
 

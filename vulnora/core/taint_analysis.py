@@ -1,5 +1,8 @@
 import ast
+import logging
 from typing import List, Dict, Set
+
+logger = logging.getLogger("vulnora.taint")
 
 class TaintAnalyzer(ast.NodeVisitor):
     def __init__(self):
@@ -16,8 +19,10 @@ class TaintAnalyzer(ast.NodeVisitor):
         try:
             tree = ast.parse(content)
             self.visit(tree)
-        except SyntaxError:
-            pass # Skip files with syntax errors
+        except SyntaxError as e:
+            logger.warning(f"Syntax error in {file_path}: {e}")
+        except Exception as e:
+            logger.error(f"Error analyzing {file_path}: {e}")
         return self.issues
 
     def visit_Assign(self, node):
@@ -43,6 +48,7 @@ class TaintAnalyzer(ast.NodeVisitor):
             for target in node.targets:
                 if isinstance(target, ast.Name):
                     self.tainted_vars.add(target.id)
+                    logger.debug(f"Variable '{target.id}' marked as tainted in {self.current_file}:{node.lineno}")
         
         self.generic_visit(node)
 

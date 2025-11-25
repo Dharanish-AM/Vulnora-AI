@@ -17,7 +17,9 @@ Vulnora AI is an advanced, offline security scanner designed to analyze software
 -   **Interactive Dashboard**: Streamlit-based UI for easy scanning and result visualization.
 -   **REST API**: FastAPI backend for integration into CI/CD pipelines or other tools.
 -   **Smart Scoring**: Calculates a "Smell Score" to gauge the overall security health of your project.
-
+-   **Smart Scoring**: Calculates a "Smell Score" to gauge the overall security health of your project.
+-   **Modern React UI**: A sleek, dark-mode enabled React client built with Vite and TailwindCSS.
+-   **Comprehensive Logging**: Detailed server-side logs for debugging and audit trails.
 ---
 
 ## 🛠️ Architecture
@@ -111,6 +113,9 @@ Vulnora-AI/
 │   ├── dashboard/       # Streamlit UI
 │   ├── models/          # Pydantic data models
 │   └── utils/           # Helper functions
+├── client/              # React + Vite Frontend
+│   ├── src/             # React source code
+│   └── vite.config.js   # Vite configuration
 └── test_project/        # Sample vulnerable project for testing
 ```
 

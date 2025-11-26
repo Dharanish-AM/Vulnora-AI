@@ -1,5 +1,6 @@
 import os
 import logging
+import concurrent.futures
 from typing import List
 from vulnora.models.issue import IssueCandidate
 from vulnora.scanners.regex import RegexScanner
@@ -13,8 +14,12 @@ class ProjectScanner:
     def __init__(self, project_path: str, llm_model: str = "gemini"):
         self.project_path = project_path
         self.llm_engine = LLMEngine(provider=llm_model)
-        self.supported_extensions = {'.py', '.js', '.jsx', '.ts', '.tsx', '.java'}
-        self.excluded_dirs = {'.git', '.venv', 'node_modules', 'dist', 'build', '__pycache__', 'target', '.idea', '.vscode'}
+        self.supported_extensions = {'.py', '.js', '.jsx', '.ts', '.tsx', '.java', '.go', '.rs', '.cpp', '.c', '.h'}
+        self.excluded_dirs = {
+            '.git', '.venv', 'venv', 'env', 'node_modules', 'dist', 'build', 
+            '__pycache__', 'target', '.idea', '.vscode', '.tox', 'coverage', 
+            'tmp', 'temp', 'logs', 'vendor', 'bin', 'obj', '.next', '.nuxt'
+        }
         self.files_to_scan = []
         
         # Initialize scanners
@@ -26,51 +31,77 @@ class ProjectScanner:
         """Recursively discover files to scan."""
         logger.info(f"Discovering files in {self.project_path}...")
         self.files_to_scan = []
+        
+        # Normalize excluded dirs for case-insensitive comparison
+        excluded_dirs_lower = {d.lower() for d in self.excluded_dirs}
+        
         for root, dirs, files in os.walk(self.project_path):
             # Modify dirs in-place to skip excluded directories
-            dirs[:] = [d for d in dirs if d not in self.excluded_dirs]
+            # We iterate over a copy of dirs to safely modify the original list
+            original_dirs = list(dirs)
+            dirs[:] = []
+            for d in original_dirs:
+                if d.lower() not in excluded_dirs_lower:
+                    dirs.append(d)
+                else:
+                    logger.debug(f"Skipping excluded directory: {os.path.join(root, d)}")
             
             for file in files:
-                ext = os.path.splitext(file)[1]
+                ext = os.path.splitext(file)[1].lower()
                 if ext in self.supported_extensions:
                     self.files_to_scan.append(os.path.join(root, file))
+                    
         logger.info(f"Found {len(self.files_to_scan)} files to scan.")
         return self.files_to_scan
+
+    def _scan_file_worker(self, file_path: str) -> List[IssueCandidate]:
+        """Worker method to scan a single file."""
+        file_issues = []
+        try:
+            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                content = f.read()
+                
+            # 1. Regex Scan
+            file_issues.extend(self.regex_scanner.scan_file(file_path, content))
+
+            # 2. SAST Scan
+            file_issues.extend(self.sast_scanner.scan_file(file_path, content))
+
+            # 3. Taint Analysis
+            file_issues.extend(self.taint_analyzer.scan_file(file_path, content))
+            
+        except Exception as e:
+            logger.error(f"Error scanning {file_path}: {e}")
+            
+        return file_issues
 
     def scan(self) -> List[IssueCandidate]:
         """Orchestrate the scanning process."""
         self.discover_files()
         issues = []
         
-        logger.info("Starting analysis...")
-        for file_path in self.files_to_scan:
-            try:
-                with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
-                    content = f.read()
-                    
-                # 1. Regex Scan (Fast, covers multiple langs)
-                regex_issues = self.regex_scanner.scan_file(file_path, content)
-                issues.extend(regex_issues)
+        logger.info(f"Starting parallel analysis on {len(self.files_to_scan)} files...")
+        
+        # Use ThreadPoolExecutor for parallel scanning
+        # Adjust max_workers based on CPU cores or I/O bound nature
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            future_to_file = {executor.submit(self._scan_file_worker, fp): fp for fp in self.files_to_scan}
+            
+            for future in concurrent.futures.as_completed(future_to_file):
+                try:
+                    file_issues = future.result()
+                    issues.extend(file_issues)
+                except Exception as e:
+                    logger.error(f"File scan generated an exception: {e}")
 
-                # 2. SAST Scan (Python only for now)
-                sast_issues = self.sast_scanner.scan_file(file_path, content)
-                issues.extend(sast_issues)
+        # 4. Deduplicate Issues
+        issues = self._deduplicate_issues(issues)
 
-                # 3. Taint Analysis (Python only)
-                taint_issues = self.taint_analyzer.scan_file(file_path, content)
-                issues.extend(taint_issues)
-                
-                # 4. Deduplicate Issues
-                issues = self._deduplicate_issues(issues)
-
-                # 5. LLM Verification (Optional/Selective)
-                # For high severity issues, we can ask LLM to verify
-                for issue in issues:
-                    if issue.severity == "Critical" and issue.confidence != "High":
-                        self.llm_engine.analyze_issue(issue)
-
-            except Exception as e:
-                logger.error(f"Error scanning {file_path}: {e}")
+        # 5. LLM Verification (Optional/Selective)
+        # For high severity issues, we can ask LLM to verify
+        for issue in issues:
+            if issue.severity in ["Critical", "High"]:
+                self.llm_engine.analyze_issue(issue)
                 
         return issues
 

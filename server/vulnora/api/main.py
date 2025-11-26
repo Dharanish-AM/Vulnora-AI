@@ -49,10 +49,15 @@ def scan_project(request: ScanRequest):
         scanner = ProjectScanner(project_path=request.path, llm_model=request.model)
         issues = scanner.scan()
         
-        # Calculate smell score (simple heuristic: issues per file)
-        # In a real app, this would be more complex
+        # Calculate smell score (weighted risk score)
+        weights = {
+            "Critical": 10,
+            "High": 5,
+            "Medium": 2,
+            "Low": 1
+        }
+        smell_score = sum(weights.get(issue.severity, 1) for issue in issues)
         total_files = len(scanner.files_to_scan)
-        smell_score = (len(issues) / total_files) * 10 if total_files > 0 else 0.0
         
         duration = time.time() - start_time
         

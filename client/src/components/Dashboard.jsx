@@ -3,18 +3,13 @@ import { ShieldAlert, FileCode, Clock, Activity } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 const MetricCard = ({ title, value, icon: Icon, color }) => (
-  <div className="tech-card p-6 rounded-lg relative overflow-hidden group">
-    <div className="relative z-10">
-      <div className="flex items-center justify-between mb-4">
-        <div className={`p-2 rounded-md ${color.bg} text-white shadow-sm`}>
-          <Icon className="w-5 h-5" />
-        </div>
-        <span className={`text-xs font-mono px-2 py-0.5 rounded-sm bg-opacity-10 ${color.bg} ${color.text}`}>
-          +12%
-        </span>
-      </div>
-      <p className="text-[var(--text-muted)] text-xs font-bold uppercase tracking-wider">{title}</p>
-      <p className="text-3xl font-bold mt-1 text-[var(--text-main)] font-mono tracking-tight">{value}</p>
+  <div className="modern-card p-6 flex items-center justify-between">
+    <div>
+      <p className="text-[var(--text-muted)] text-sm font-medium mb-1">{title}</p>
+      <p className="text-3xl font-bold text-[var(--text-main)] tracking-tight">{value}</p>
+    </div>
+    <div className={`p-3 rounded-xl ${color.bg} text-white shadow-sm`}>
+      <Icon className="w-6 h-6" />
     </div>
   </div>
 );
@@ -45,11 +40,11 @@ const Dashboard = ({ result }) => {
     value: typeCounts[key],
   }));
 
-  const COLORS = ['#3b82f6', '#06b6d4', '#8b5cf6', '#10b981', '#f59e0b'];
+  const COLORS = ['#6366f1', '#ec4899', '#8b5cf6', '#14b8a6', '#f43f5e'];
 
   return (
-    <div className="space-y-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard
           title="Total Issues"
           value={result.issues.length}
@@ -76,27 +71,27 @@ const Dashboard = ({ result }) => {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Severity Chart */}
-        <div className="tech-card p-8 rounded-lg">
-          <h3 className="text-sm font-bold mb-6 text-[var(--text-main)] flex items-center gap-2 uppercase tracking-wider">
-            <Activity className="w-4 h-4 text-[var(--color-primary)]" />
+        <div className="modern-card p-6">
+          <h3 className="text-base font-semibold mb-6 text-[var(--text-main)] flex items-center gap-2">
+            <Activity className="w-4 h-4 text-[var(--text-muted)]" />
             Issues by Severity
           </h3>
-          <div className="h-72">
+          <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={severityData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" opacity={0.3} vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
                 <XAxis 
                   dataKey="name" 
                   stroke="var(--text-muted)" 
-                  tick={{ fill: 'var(--text-muted)', fontSize: 11, fontFamily: 'JetBrains Mono' }} 
+                  tick={{ fill: 'var(--text-muted)', fontSize: 12 }} 
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis 
                   stroke="var(--text-muted)" 
-                  tick={{ fill: 'var(--text-muted)', fontSize: 11, fontFamily: 'JetBrains Mono' }} 
+                  tick={{ fill: 'var(--text-muted)', fontSize: 12 }} 
                   axisLine={false}
                   tickLine={false}
                 />
@@ -106,13 +101,12 @@ const Dashboard = ({ result }) => {
                     backgroundColor: 'var(--bg-card)', 
                     borderColor: 'var(--border-color)', 
                     color: 'var(--text-main)',
-                    borderRadius: '4px',
+                    borderRadius: '8px',
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                    border: '1px solid var(--border-color)',
                   }}
-                  itemStyle={{ color: 'var(--text-main)', fontFamily: 'JetBrains Mono', fontSize: '12px' }}
+                  itemStyle={{ color: 'var(--text-main)' }}
                 />
-                <Bar dataKey="count" radius={[2, 2, 0, 0]} barSize={40}>
+                <Bar dataKey="count" radius={[4, 4, 0, 0]} barSize={32}>
                   {severityData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
@@ -123,20 +117,20 @@ const Dashboard = ({ result }) => {
         </div>
 
         {/* Type Chart */}
-        <div className="tech-card p-8 rounded-lg">
-          <h3 className="text-sm font-bold mb-6 text-[var(--text-main)] flex items-center gap-2 uppercase tracking-wider">
-            <ShieldAlert className="w-4 h-4 text-[var(--color-accent)]" />
+        <div className="modern-card p-6">
+          <h3 className="text-base font-semibold mb-6 text-[var(--text-main)] flex items-center gap-2">
+            <ShieldAlert className="w-4 h-4 text-[var(--text-muted)]" />
             Top Vulnerabilities
           </h3>
-          <div className="h-72">
+          <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={typeData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={80}
-                  outerRadius={110}
+                  innerRadius={70}
+                  outerRadius={100}
                   paddingAngle={2}
                   dataKey="value"
                   stroke="var(--bg-card)"
@@ -151,11 +145,10 @@ const Dashboard = ({ result }) => {
                     backgroundColor: 'var(--bg-card)', 
                     borderColor: 'var(--border-color)', 
                     color: 'var(--text-main)',
-                    borderRadius: '4px',
+                    borderRadius: '8px',
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                    border: '1px solid var(--border-color)',
                   }}
-                   itemStyle={{ color: 'var(--text-main)', fontFamily: 'JetBrains Mono', fontSize: '12px' }}
+                   itemStyle={{ color: 'var(--text-main)' }}
                 />
               </PieChart>
             </ResponsiveContainer>

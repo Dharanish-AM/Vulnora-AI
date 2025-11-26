@@ -12,6 +12,7 @@ class IssueCandidate(BaseModel):
     confidence: str = "Low"
     snippet: Optional[str] = None
     suggested_fix: Optional[str] = None
+    fix_theory: Optional[str] = None
 
 class ScanResult(BaseModel):
     project_path: str

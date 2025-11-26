@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Shield } from 'lucide-react';
+import { Shield, Sun, Moon } from 'lucide-react';
 import ScanForm from './components/ScanForm';
 import Dashboard from './components/Dashboard';
 import VulnerabilityList from './components/VulnerabilityList';
+import { useTheme } from './context/ThemeContext';
 
 function App() {
   const [result, setResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { theme, toggleTheme } = useTheme();
 
   const handleScan = async (path, model) => {
     setIsLoading(true);
@@ -16,13 +18,11 @@ function App() {
     setResult(null);
 
     try {
-      // Use relative path, Vite proxy will handle the rest
       const response = await axios.post('/api/scan', {
         path,
         model
       });
       setResult(response.data);
-      console.log(response.data);
     } catch (err) {
       setError(err.response?.data?.detail || 'Failed to connect to scanner API');
       console.error(err);
@@ -32,19 +32,27 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-darker text-slate-200 p-4 md:p-8">
+    <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)] p-4 md:p-8 transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <header className="mb-10 flex items-center gap-3 border-b border-slate-800 pb-6">
-          <div className="bg-gradient-to-br from-primary to-secondary p-3 rounded-xl shadow-lg shadow-primary/20">
-            <Shield className="w-8 h-8 text-white" />
+        <header className="mb-8 flex items-center justify-between border-b border-[var(--border-color)] pb-6">
+          <div className="flex items-center gap-4">
+            <div className="bg-[var(--color-primary)] p-2 rounded-lg shadow-lg shadow-blue-500/20">
+              <Shield className="w-8 h-8 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-[var(--text-main)] uppercase">
+                Vulnora AI
+              </h1>
+              <p className="text-[var(--text-muted)] text-xs font-mono tracking-wider">SECURE CODE ANALYSIS SYSTEM</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
-              Vulnora AI
-            </h1>
-            <p className="text-slate-400">Advanced Multi-Language Security Scanner</p>
-          </div>
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-lg border border-[var(--border-color)] hover:bg-[var(--border-color)] transition-colors"
+          >
+            {theme === 'dark' ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5 text-slate-600" />}
+          </button>
         </header>
 
         {/* Main Content */}
@@ -58,7 +66,7 @@ function App() {
           )}
 
           {result && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-8">
               <Dashboard result={result} />
               <VulnerabilityList issues={result.issues} />
             </div>

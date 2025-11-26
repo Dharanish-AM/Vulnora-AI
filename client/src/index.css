@@ -7,29 +7,29 @@
 }
 
 :root {
-  /* Modern Minimalist - Light Mode */
-  --color-primary: #6366f1; /* Indigo 500 */
-  --color-secondary: #0f172a; /* Slate 900 */
-  --color-accent: #8b5cf6; /* Violet 500 */
+  /* Purple Theme - Light Mode */
+  --color-primary: #6B3F69; /* Deep Purple */
+  --color-secondary: #2D1A2C; /* Darker Deep Purple */
+  --color-accent: #A376A2; /* Light Purple */
   
-  --bg-main: #f8fafc; /* Slate 50 */
-  --bg-card: #ffffff;
-  --text-main: #1e293b; /* Slate 800 */
-  --text-muted: #64748b; /* Slate 500 */
-  --border-color: #e2e8f0; /* Slate 200 */
+  --bg-main: #FAF5F8; /* Very light purple tint */
+  --bg-card: #FFFFFF;
+  --text-main: #1A0F19; /* Deepest Purple */
+  --text-muted: #6B3F69; /* Deep Purple */
+  --border-color: #DDC3C3; /* Dusty Rose */
 }
 
 .dark {
-  /* Modern Minimalist - Dark Mode */
-  --bg-main: #0f172a; /* Slate 900 */
-  --bg-card: #1e293b; /* Slate 800 */
-  --text-main: #f8fafc; /* Slate 50 */
-  --text-muted: #94a3b8; /* Slate 400 */
-  --border-color: #334155; /* Slate 700 */
+  /* Purple Theme - Dark Mode */
+  --bg-main: #1A0F19; /* Deepest Purple */
+  --bg-card: #2D1A2C; /* Darker Deep Purple */
+  --text-main: #FAF5F8; /* Light Purple Tint */
+  --text-muted: #A376A2; /* Light Purple */
+  --border-color: #6B3F69; /* Deep Purple */
   
-  --color-primary: #818cf8; /* Indigo 400 */
-  --color-secondary: #f8fafc;
-  --color-accent: #a78bfa; /* Violet 400 */
+  --color-primary: #A376A2; /* Light Purple */
+  --color-secondary: #FAF5F8;
+  --color-accent: #8D5F8C; /* Medium Purple */
 }
 
 body {

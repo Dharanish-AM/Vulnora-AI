@@ -24,10 +24,10 @@ const Dashboard = ({ result }) => {
   }, {});
 
   const severityData = [
-    { name: 'Critical', count: severityCounts['Critical'] || 0, color: '#ef4444' },
-    { name: 'High', count: severityCounts['High'] || 0, color: '#f97316' },
-    { name: 'Medium', count: severityCounts['Medium'] || 0, color: '#eab308' },
-    { name: 'Low', count: severityCounts['Low'] || 0, color: '#3b82f6' },
+    { name: 'Critical', count: severityCounts['Critical'] || 0, color: '#6B3F69' }, // Deep Purple for critical
+    { name: 'High', count: severityCounts['High'] || 0, color: '#8D5F8C' }, // Medium Purple for high
+    { name: 'Medium', count: severityCounts['Medium'] || 0, color: '#A376A2' }, // Light Purple for medium
+    { name: 'Low', count: severityCounts['Low'] || 0, color: '#DDC3C3' }, // Dusty Rose for low
   ];
 
   const typeCounts = result.issues.reduce((acc, issue) => {
@@ -40,7 +40,8 @@ const Dashboard = ({ result }) => {
     value: typeCounts[key],
   }));
 
-  const COLORS = ['#6366f1', '#ec4899', '#8b5cf6', '#14b8a6', '#f43f5e'];
+  // Purple theme colors for charts
+  const COLORS = ['#6B3F69', '#8D5F8C', '#A376A2', '#DDC3C3', '#2D1A2C'];
 
   return (
     <div className="space-y-6">
@@ -49,25 +50,25 @@ const Dashboard = ({ result }) => {
           title="Total Issues"
           value={result.issues.length}
           icon={ShieldAlert}
-          color={{ bg: 'bg-red-500', text: 'text-red-500' }}
+          color={{ bg: 'bg-[var(--color-primary)]', text: 'text-red-500' }} // Keep red for issues
         />
         <MetricCard
           title="Smell Score"
           value={result.smell_score}
           icon={Activity}
-          color={{ bg: 'bg-yellow-500', text: 'text-yellow-500' }}
+          color={{ bg: 'bg-[var(--color-primary)]', text: 'text-[var(--text-main)]' }} // Use theme accent
         />
         <MetricCard
           title="Files Scanned"
           value={result.files_scanned}
           icon={FileCode}
-          color={{ bg: 'bg-blue-500', text: 'text-blue-500' }}
+          color={{ bg: 'bg-[var(--color-primary)]', text: 'text-white' }} // Use theme primary
         />
         <MetricCard
           title="Scan Duration"
           value={`${result.scan_duration}s`}
           icon={Clock}
-          color={{ bg: 'bg-green-500', text: 'text-green-500' }}
+          color={{ bg: 'bg-[var(--color-primary)]', text: 'text-white' }} // Use theme secondary
         />
       </div>
 
@@ -82,24 +83,24 @@ const Dashboard = ({ result }) => {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={severityData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
-                <XAxis 
-                  dataKey="name" 
-                  stroke="var(--text-muted)" 
-                  tick={{ fill: 'var(--text-muted)', fontSize: 12 }} 
+                <XAxis
+                  dataKey="name"
+                  stroke="var(--text-muted)"
+                  tick={{ fill: 'var(--text-muted)', fontSize: 12 }}
                   axisLine={false}
                   tickLine={false}
                 />
-                <YAxis 
-                  stroke="var(--text-muted)" 
-                  tick={{ fill: 'var(--text-muted)', fontSize: 12 }} 
+                <YAxis
+                  stroke="var(--text-muted)"
+                  tick={{ fill: 'var(--text-muted)', fontSize: 12 }}
                   axisLine={false}
                   tickLine={false}
                 />
-                <Tooltip 
+                <Tooltip
                   cursor={{ fill: 'var(--bg-main)', opacity: 0.5 }}
-                  contentStyle={{ 
-                    backgroundColor: 'var(--bg-card)', 
-                    borderColor: 'var(--border-color)', 
+                  contentStyle={{
+                    backgroundColor: 'var(--bg-card)',
+                    borderColor: 'var(--border-color)',
                     color: 'var(--text-main)',
                     borderRadius: '8px',
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
@@ -140,15 +141,15 @@ const Dashboard = ({ result }) => {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip 
-                   contentStyle={{ 
-                    backgroundColor: 'var(--bg-card)', 
-                    borderColor: 'var(--border-color)', 
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'var(--bg-card)',
+                    borderColor: 'var(--border-color)',
                     color: 'var(--text-main)',
                     borderRadius: '8px',
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                   }}
-                   itemStyle={{ color: 'var(--text-main)' }}
+                  itemStyle={{ color: 'var(--text-main)' }}
                 />
               </PieChart>
             </ResponsiveContainer>

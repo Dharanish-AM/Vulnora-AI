@@ -7,11 +7,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#6366f1', // Indigo 500
-        secondary: '#a855f7', // Purple 500
-        dark: '#0f172a', // Slate 900
-        darker: '#020617', // Slate 950
-        card: '#1e293b', // Slate 800
+        primary: '#6B3F69', // Deep Purple
+        secondary: '#8D5F8C', // Medium Purple
+        accent: '#A376A2', // Light Purple
+        dark: '#2D1A2C', // Darker Deep Purple
+        darker: '#1A0F19', // Deepest Purple
+        card: '#FAF5F8', // Very Light Purple Tint
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

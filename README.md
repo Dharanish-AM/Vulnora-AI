@@ -213,6 +213,61 @@ Create a `.env` file in the `server/` directory if customization is needed.
 
 ## 🚀 Usage
 
+### Desktop Application (Recommended)
+
+Run Vulnora AI as a native desktop application using Electron:
+
+**Step 1: Start the Python server**
+```bash
+# Terminal 1
+cd server
+source .venv/bin/activate
+python main.py
+```
+
+**Step 2: Launch the desktop app**
+```bash
+# Terminal 2
+cd client
+npm run electron:dev
+```
+
+The Electron window will open automatically with the full UI.
+
+**Building for Production:**
+```bash
+cd client
+npm run electron:build
+```
+
+Distributable files will be created in `client/release/` for macOS, Windows, and Linux.
+
+### Web Interface
+
+#### React Client
+
+```bash
+# Terminal 1: Start backend
+cd server
+source .venv/bin/activate
+python main.py
+
+# Terminal 2: Start frontend
+cd client
+npm run dev
+```
+
+Open `http://localhost:5173`
+
+#### Streamlit (Standalone)
+
+```bash
+cd server
+streamlit run streamlit_app.py
+```
+
+Open `http://localhost:8501`
+
 ### CLI Mode
 
 Scan a project directly from the command line:
@@ -237,7 +292,7 @@ Scan complete. Found 5 issues.
 
 ### API Mode
 
-Start the FastAPI backend:
+Start the FastAPI backend as a standalone service:
 
 ```bash
 cd server
@@ -247,32 +302,6 @@ python main.py api
 ```
 
 Server runs at `http://localhost:8000`
-
-### Web Interface
-
-#### Option 1: React Client (Recommended)
-
-```bash
-# Terminal 1: Start backend
-cd server
-source .venv/bin/activate
-python main.py
-
-# Terminal 2: Start frontend
-cd client
-npm run dev
-```
-
-Open `http://localhost:5173`
-
-#### Option 2: Streamlit (Standalone)
-
-```bash
-cd server
-streamlit run streamlit_app.py
-```
-
-Open `http://localhost:8501`
 
 ---
 
@@ -388,11 +417,11 @@ Vulnora-AI/
 - [x] React web interface
 - [x] REST API
 - [x] CLI support
+- [x] **Electron desktop application**
 
 ### 🚧 In Progress
 - [ ] GitHub Actions integration
 - [ ] Docker containerization
-- [ ] VS Code extension
 
 ### 📋 Planned Features
 

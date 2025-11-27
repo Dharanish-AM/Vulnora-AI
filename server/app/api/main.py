@@ -11,7 +11,7 @@ from app.models.issue import ScanResult
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    format="%(asctime)s - %(name)s - [%(levelname)s] - %(message)s",
     handlers=[
         logging.StreamHandler()
     ]
@@ -38,9 +38,11 @@ def read_root():
 
 @app.post("/scan", response_model=ScanResult)
 def scan_project(request: ScanRequest):
-    logger.info(f"Received scan request for project: {request.path} with model: {request.model}")
+    logger.info(f"🚀 Received scan request for project: {request.path}")
+    logger.info(f"Using model: {request.model}")
+    
     if not os.path.exists(request.path) or not os.path.isdir(request.path):
-        logger.error(f"Invalid project path: {request.path}")
+        logger.error(f"❌ Invalid project path: {request.path}")
         raise HTTPException(status_code=400, detail="Invalid project path")
 
     start_time = time.time()
@@ -61,7 +63,8 @@ def scan_project(request: ScanRequest):
         
         duration = time.time() - start_time
         
-        logger.info(f"Scan completed in {duration:.2f}s. Found {len(issues)} issues. Smell Score: {smell_score:.2f}")
+        logger.info(f"✅ Scan completed in {duration:.2f}s")
+        logger.info(f"📊 Results: {len(issues)} issues found. Smell Score: {smell_score:.2f}")
         
         return ScanResult(
             project_path=request.path,

@@ -71,7 +71,12 @@ Example format:
 If no vulnerabilities are found, return an empty array: []
 """
         
+        logger.info(f"🤖 Analyzing {file_path} with {self.provider}...")
+        logger.debug(f"Prompt sent to LLM:\n{prompt[:500]}...") # Log truncated prompt
+        
         response = self._call_ollama(prompt)
+        
+        logger.debug(f"📝 Raw LLM Response for {file_path}:\n{response}")
         issues = []
         
         if not response:
@@ -103,9 +108,12 @@ If no vulnerabilities are found, return an empty array: []
                         fix_theory=item.get("fix_theory", ""),
                         suggested_fix=item.get("fixed_code", "")
                     ))
+                
+                logger.info(f"✅ Successfully parsed {len(issues)} issues from {file_path}")
                     
-        except json.JSONDecodeError:
-            logger.error(f"Failed to parse LLM response for {file_path}: {response[:100]}...")
+        except json.JSONDecodeError as e:
+            logger.error(f"❌ Failed to parse LLM response for {file_path}: {e}")
+            logger.error(f"Malformed JSON Content:\n{response}")
         except Exception as e:
             logger.error(f"Error processing LLM response for {file_path}: {e}")
             

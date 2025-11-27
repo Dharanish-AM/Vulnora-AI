@@ -33,21 +33,17 @@
 
 ## 🎯 Overview
 
-Vulnora AI is an **enterprise-grade, offline security scanner** that analyzes software projects for vulnerabilities using a hybrid approach combining:
-
-- **Static Analysis** - Pattern-based vulnerability detection
-- **AST Taint Analysis** - Data flow tracking for Python
-- **LLM Validation** - AI-powered verification using local models (Ollama)
+Vulnora AI is an **enterprise-grade, offline security scanner** that analyzes software projects for vulnerabilities using a state-of-the-art **LLM-Powered Analysis Engine**.
 
 ### Why Vulnora AI?
 
-**Problem**: Traditional security scanners either produce too many false positives or require cloud uploads, compromising code privacy.
+**Problem**: Traditional security scanners rely on rigid patterns (regex) that produce too many false positives and miss complex logic bugs.
 
-**Solution**: Vulnora AI runs entirely on your local machine, uses AI to validate findings, and provides actionable fixes—all while keeping your code private.
+**Solution**: Vulnora AI runs entirely on your local machine, using advanced Large Language Models (like Llama 3) to "read" and understand your code like a senior security engineer. It detects logic flaws, insecure configurations, and complex vulnerabilities that static tools miss—all while keeping your code private.
 
 ### Who Is It For?
 
-- **Security Engineers** - Integrate into CI/CD pipelines
+- **Security Engineers** - Deep dive analysis without manual review fatigue
 - **Development Teams** - Catch vulnerabilities before production
 - **Solo Developers** - Quick security audits without cloud dependencies
 - **Enterprises** - Maintain code privacy with offline scanning
@@ -59,19 +55,18 @@ Vulnora AI is an **enterprise-grade, offline security scanner** that analyzes so
 ### Core Capabilities
 
 - ✅ **Multi-Language Support** - Python, JavaScript, TypeScript, Java, Go, Rust, C/C++
-- ✅ **Hybrid Analysis Engine**
-  - Regex pattern matching for known vulnerabilities
-  - AST-based taint analysis for Python
-  - LLM validation to reduce false positives
+- ✅ **LLM-Powered Analysis**
+  - **Deep Contextual Understanding**: Detects logic bugs and business flow flaws
+  - **Comprehensive Detection**: OWASP Top 10, CWE Top 25, Secrets, and more
+  - **Zero False Positives**: AI validates every finding before reporting
 - ✅ **High Performance**
   - Parallel file scanning with multi-threading
   - Smart directory exclusion (node_modules, .venv, etc.)
-  - Optimized for large codebases
-- ✅ **100% Offline & Private** - No cloud uploads, runs locally
+- ✅ **100% Offline & Private** - No cloud uploads, runs locally with Ollama
 - ✅ **Modern Web UI** - React-based dashboard with real-time metrics
 - ✅ **REST API** - Easy integration into existing workflows
 - ✅ **CLI Support** - Scan projects from the command line
-- ✅ **Detailed Reports** - Vulnerability descriptions, severity levels, and suggested fixes
+- ✅ **Detailed Reports** - Vulnerable code, fix theory, and ready-to-use patches
 
 ### Security Checks
 
@@ -130,18 +125,13 @@ Vulnora AI is an **enterprise-grade, offline security scanner** that analyzes so
 │                    │  - Parallel Scan │                   │
 │                    └────────┬─────────┘                   │
 │                             │                              │
-│         ┌───────────────────┼───────────────────┐         │
-│         ▼                   ▼                   ▼         │
-│  ┌─────────────┐   ┌──────────────┐   ┌──────────────┐  │
-│  │   Regex     │   │  SAST/AST    │   │    Taint     │  │
-│  │   Scanner   │   │   Analyzer   │   │   Analyzer   │  │
-│  └─────────────┘   └──────────────┘   └──────────────┘  │
-│         │                   │                   │         │
-│         └───────────────────┼───────────────────┘         │
 │                             ▼                              │
 │                    ┌──────────────────┐                   │
 │                    │   LLM Engine     │                   │
 │                    │   (Ollama)       │                   │
+│                    │  - Analysis      │                   │
+│                    │  - Validation    │                   │
+│                    │  - Patching      │                   │
 │                    └──────────────────┘                   │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
@@ -149,11 +139,13 @@ Vulnora AI is an **enterprise-grade, offline security scanner** that analyzes so
 
 ### Workflow
 
-1. **File Discovery** - Recursively scans project directories
-2. **Parallel Analysis** - Runs regex, SAST, and taint analysis concurrently
-3. **LLM Validation** - High-severity issues verified by local AI
-4. **Deduplication** - Removes duplicate findings
-5. **Report Generation** - Creates detailed vulnerability reports
+### Workflow
+
+1. **File Discovery** - Recursively scans project directories for supported files.
+2. **Parallel Analysis** - Distributes files across multiple threads for speed.
+3. **LLM Analysis** - Each file is analyzed by the local AI model for security issues.
+4. **Structured Reporting** - AI extracts vulnerable code, explains the fix theory, and generates a patch.
+5. **Result Aggregation** - Findings are compiled and returned via API.
 
 ---
 
@@ -389,13 +381,7 @@ Vulnora-AI/
 │       ├── api/                # FastAPI routes
 │       │   └── main.py
 │       ├── core/               # Scanning logic
-│       │   ├── scanner.py      # Main scanner
-│       │   └── patterns.py     # Vulnerability patterns
-│       ├── scanners/           # Analysis engines
-│       │   ├── regex.py        # Pattern matching
-│       │   └── sast.py         # AST analysis
-│       ├── analyzers/          # Advanced analyzers
-│       │   └── taint.py        # Taint tracking
+│       │   └── scanner.py      # Main scanner orchestrator
 │       ├── llm/                # LLM integration
 │       │   └── engine.py
 │       └── models/             # Data models

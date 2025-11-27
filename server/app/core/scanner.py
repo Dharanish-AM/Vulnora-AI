@@ -45,7 +45,7 @@ class ProjectScanner:
                 if ext in self.supported_extensions:
                     self.files_to_scan.append(os.path.join(root, file))
                     
-        logger.info(f"Found {len(self.files_to_scan)} files to scan.")
+        logger.info(f"📂 Found {len(self.files_to_scan)} supported files to scan.")
         return self.files_to_scan
 
     def _scan_file_worker(self, file_path: str) -> List[IssueCandidate]:
@@ -56,7 +56,9 @@ class ProjectScanner:
                 content = f.read()
                 
             # LLM Scan
+            logger.debug(f"Scanning file: {file_path}")
             file_issues.extend(self.llm_engine.scan_file(file_path, content))
+            logger.debug(f"Finished scanning {file_path}. Found {len(file_issues)} issues.")
             
         except Exception as e:
             logger.error(f"Error scanning {file_path}: {e}")
@@ -68,7 +70,7 @@ class ProjectScanner:
         self.discover_files()
         issues = []
         
-        logger.info(f"Starting parallel analysis on {len(self.files_to_scan)} files...")
+        logger.info(f"🚀 Starting parallel analysis on {len(self.files_to_scan)} files...")
         
         # Use ThreadPoolExecutor for parallel scanning
         # Adjust max_workers based on CPU cores or I/O bound nature

@@ -90,19 +90,12 @@ Backend:
 │           │   - Parallel Scanning  │                       │
 │           └───────────┬────────────┘                       │
 │                       │                                     │
-│       ┌───────────────┼───────────────┐                   │
-│       ▼               ▼               ▼                   │
-│  ┌─────────┐   ┌──────────┐   ┌──────────┐              │
-│  │ Regex   │   │   SAST   │   │  Taint   │              │
-│  │ Scanner │   │ Analyzer │   │ Analyzer │              │
-│  └─────────┘   └──────────┘   └──────────┘              │
-│       │               │               │                   │
-│       └───────────────┼───────────────┘                   │
 │                       ▼                                     │
 │           ┌────────────────────────┐                       │
 │           │   LLM Engine (Ollama)  │                       │
-│           │   - Validates findings │                       │
-│           │   - Reduces false +    │                       │
+│           │   - Deep Analysis      │                       │
+│           │   - Logic Bug Detection│                       │
+│           │   - Patch Generation   │                       │
 │           └────────────────────────┘                       │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
@@ -123,19 +116,13 @@ Backend:
 
 3. **Scanning Engine**
    - Discovers files in project
-   - Runs multiple analyzers in parallel
-   - Deduplicates findings
-   - Calculates "smell score"
+   - Orchestrates parallel LLM analysis
+   - Aggregates results
 
-4. **Analysis Layer**
-   - **Regex Scanner**: Pattern matching for known vulnerabilities
-   - **SAST Analyzer**: AST-based static analysis (Python only)
-   - **Taint Analyzer**: Data flow tracking (Python only)
-
-5. **AI Validation Layer**
-   - Ollama LLM validates high-severity findings
-   - Reduces false positives
-   - Generates fix suggestions
+4. **Analysis Layer (LLM Engine)**
+   - **Deep Analysis**: Analyzes code for logic bugs, secrets, and vulnerabilities
+   - **Validation**: Ensures findings are accurate (low false positives)
+   - **Patch Generation**: Creates secure code fixes with explanations
 
 ---
 
@@ -155,15 +142,7 @@ server/
     │   └── main.py          # API endpoints
     ├── core/                 # Core scanning logic
     │   ├── __init__.py
-    │   ├── scanner.py       # Main scanner orchestrator
-    │   └── patterns.py      # Vulnerability patterns
-    ├── scanners/             # Individual scanners
-    │   ├── __init__.py
-    │   ├── regex.py         # Pattern-based scanner
-    │   └── sast.py          # AST-based scanner
-    ├── analyzers/            # Advanced analyzers
-    │   ├── __init__.py
-    │   └── taint.py         # Taint analysis
+    │   └── scanner.py       # Main scanner orchestrator
     ├── llm/                  # LLM integration
     │   ├── __init__.py
     │   └── engine.py        # Ollama client
@@ -218,116 +197,23 @@ server/
 # Responsibilities:
 # 1. Discover files in project directory
 # 2. Filter out excluded directories (node_modules, .venv, etc.)
-# 3. Run multiple scanners in parallel
-# 4. Deduplicate findings
+# 3. Run LLM analysis in parallel threads
+# 4. Aggregate findings
 # 5. Calculate smell score
-# 6. Validate with LLM
 
 # Key Methods:
 # - discover_files(): Recursively find scannable files
 # - scan(): Main scanning orchestration
-# - _run_parallel_analysis(): Multi-threaded scanning
-# - _deduplicate_issues(): Remove duplicate findings
-# - _calculate_smell_score(): Risk assessment
-```
+# - _scan_file_worker(): Worker for parallel LLM analysis
 
-**Scanning Workflow:**
+# Scanning Workflow:
 1. Discover all files (exclude `.venv`, `node_modules`, `.git`, etc.)
 2. Determine language for each file
-3. Run appropriate scanners in parallel threads
-4. Collect all findings
-5. Deduplicate based on file+line+rule_id
-6. Validate high-severity issues with LLM
-7. Calculate overall smell score
-8. Return structured results
-
-#### `vulnora/core/patterns.py` - Vulnerability Patterns
-
-```python
-# Responsibilities:
-# 1. Define regex patterns for each vulnerability type
-# 2. Map patterns to severity levels
-# 3. Provide descriptions and fix suggestions
-
-# Pattern Structure:
-# {
-#     'rule_id': 'PY-001',
-#     'pattern': r'regex_pattern',
-#     'severity': 'High',
-#     'description': 'What the vulnerability is',
-#     'suggested_fix': 'How to fix it'
-# }
-```
-
-**Supported Languages:**
-- Python (PY-*)
-- JavaScript/TypeScript (JS-*)
-- Java (JAVA-*)
-- Go (GO-*)
-- Rust (RUST-*)
-- C/C++ (C-*)
-
-#### `vulnora/scanners/regex.py` - Pattern Scanner
-
-```python
-# Responsibilities:
-# 1. Apply regex patterns to code
-# 2. Extract code snippets
-# 3. Create Issue objects for matches
-
-# How it works:
-# - Loads patterns from patterns.py
-# - Iterates through each pattern
-# - Searches file content with regex
-# - Captures line number and context
-# - Returns list of Issue objects
-```
-
-#### `vulnora/scanners/sast.py` - AST Scanner
-
-```python
-# Responsibilities:
-# 1. Parse Python code into AST
-# 2. Analyze AST nodes for vulnerabilities
-# 3. Detect dangerous function calls
-# 4. Find insecure patterns
-
-# Checks:
-# - subprocess with shell=True
-# - eval() usage
-# - exec() usage
-# - pickle.loads()
-# - yaml.load() without SafeLoader
-```
-
-**How AST Works:**
-```python
-# Code: subprocess.call(cmd, shell=True)
-# AST: Call(func=Attribute(value=Name(id='subprocess'), attr='call'))
-# Detection: Check if 'shell' keyword arg is True
-```
-
-#### `vulnora/analyzers/taint.py` - Taint Analysis
-
-```python
-# Responsibilities:
-# 1. Track data flow from sources to sinks
-# 2. Detect SQL injection paths
-# 3. Find command injection vulnerabilities
-
-# Concepts:
-# - Source: User input (request.args, input(), etc.)
-# - Sink: Dangerous function (execute(), os.system(), etc.)
-# - Taint: Data flows from source to sink without sanitization
-```
-
-**Example:**
-```python
-# Source
-user_input = request.args.get('id')
-
-# Sink (vulnerable if tainted)
-db.execute(f"SELECT * FROM users WHERE id = {user_input}")
+3. Send file content to `LLMEngine` in parallel threads
+4. LLM analyzes code and returns structured JSON
+5. Collect all findings
+6. Calculate overall smell score
+7. Return structured results
 ```
 
 #### `vulnora/llm/engine.py` - LLM Integration
@@ -335,16 +221,20 @@ db.execute(f"SELECT * FROM users WHERE id = {user_input}")
 ```python
 # Responsibilities:
 # 1. Connect to Ollama API
-# 2. Validate vulnerability findings
-# 3. Generate fix theories
-# 4. Reduce false positives
+# 2. Perform deep security analysis
+# 3. Detect OWASP/CWE vulnerabilities
+# 4. Identify logic bugs and secrets
+# 5. Generate fix theories and patches
 
 # Process:
-# 1. Format issue as prompt
+# 1. Construct comprehensive prompt with code context
 # 2. Send to Ollama (llama3.1:8b)
-# 3. Parse AI response
-# 4. Extract validation + fix theory
-# 5. Update issue object
+# 3. Parse JSON response containing:
+#    - Vulnerability Type
+#    - Severity
+#    - Vulnerable Code
+#    - Fix Theory
+#    - Fixed Code
 ```
 
 #### `vulnora/models/issue.py` - Data Model

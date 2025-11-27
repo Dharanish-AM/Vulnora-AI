@@ -35,7 +35,7 @@ class LLMEngine:
         """
         Scan a file for vulnerabilities using the LLM.
         """
-        prompt = f"""You are a senior security engineer. Analyze the following code for security vulnerabilities.
+        prompt = f"""You are an elite security researcher and code auditor. Perform a comprehensive security analysis of the following code.
 File: {file_path}
 
 Code:
@@ -44,27 +44,26 @@ Code:
 ```
 
 Instructions:
-1. Identify potential security vulnerabilities (OWASP Top 10, etc.).
-2. Ignore minor style issues or best practices unless they have security implications.
-3. For each vulnerability found, provide:
-   - Type (e.g., SQL Injection, XSS)
-   - Severity (Critical, High, Medium, Low)
-   - Line Number (approximate)
-   - Description (concise)
-   - Vulnerable Code (exact snippet from the file)
-   - Fix Theory (explanation of why the fix works)
-   - Fixed Code (secure code snippet to replace the vulnerable code)
+1.  **Analyze Deeply**: Look beyond surface-level issues. Consider logic flaws, race conditions, and complex interaction bugs.
+2.  **Identify ALL Issues**: Detect vulnerabilities across these categories:
+    *   **OWASP Top 10** (Injection, Broken Auth, XSS, IDOR, etc.)
+    *   **CWE Top 25** (Memory safety, OOB read/write, etc.)
+    *   **Secrets**: Hardcoded API keys, passwords, tokens, private keys.
+    *   **Logic Bugs**: Business logic errors, bypasses, pricing manipulation.
+    *   **Configuration**: Insecure defaults, missing security headers (if applicable).
+    *   **Bad Practices**: Use of deprecated/unsafe functions, poor error handling.
+3.  **Provide Detailed Fixes**: For each issue, explain *why* it is dangerous and *how* to fix it properly.
 
 Format your response as a JSON array of objects. Do NOT include any text outside the JSON.
 Example format:
 [
     {{
         "type": "SQL Injection",
-        "severity": "High",
+        "severity": "Critical",
         "line": 10,
-        "description": "User input concatenated directly into SQL query.",
+        "description": "User input is directly concatenated into a SQL query, allowing an attacker to manipulate the query structure.",
         "vulnerable_code": "query = 'SELECT * FROM users WHERE name = ' + user_input",
-        "fix_theory": "Using parameterized queries prevents the database from interpreting user input as SQL commands.",
+        "fix_theory": "Parameterized queries (prepared statements) ensure that the database treats user input as data, not executable code, effectively neutralizing the injection attack.",
         "fixed_code": "cursor.execute('SELECT * FROM users WHERE name = ?', (user_input,))"
     }}
 ]

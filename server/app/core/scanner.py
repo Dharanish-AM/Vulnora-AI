@@ -2,13 +2,10 @@ import os
 import logging
 import concurrent.futures
 from typing import List
-from vulnora.models.issue import IssueCandidate
-from vulnora.scanners.regex import RegexScanner
-from vulnora.scanners.sast import SASTScanner
-from vulnora.analyzers.taint import TaintAnalyzer
-from vulnora.llm.engine import LLMEngine
+from app.models.issue import IssueCandidate
+from app.llm.engine import LLMEngine
 
-logger = logging.getLogger("vulnora.scanner")
+logger = logging.getLogger("app.scanner")
 
 class ProjectScanner:
     def __init__(self, project_path: str, llm_model: str = "gemini"):
@@ -23,9 +20,9 @@ class ProjectScanner:
         self.files_to_scan = []
         
         # Initialize scanners
-        self.regex_scanner = RegexScanner()
-        self.sast_scanner = SASTScanner()
-        self.taint_analyzer = TaintAnalyzer()
+        # self.regex_scanner = RegexScanner()
+        # self.sast_scanner = SASTScanner()
+        # self.taint_analyzer = TaintAnalyzer()
 
     def discover_files(self) -> List[str]:
         """Recursively discover files to scan."""
@@ -61,14 +58,8 @@ class ProjectScanner:
             with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                 content = f.read()
                 
-            # 1. Regex Scan
-            file_issues.extend(self.regex_scanner.scan_file(file_path, content))
-
-            # 2. SAST Scan
-            file_issues.extend(self.sast_scanner.scan_file(file_path, content))
-
-            # 3. Taint Analysis
-            file_issues.extend(self.taint_analyzer.scan_file(file_path, content))
+            # LLM Scan
+            file_issues.extend(self.llm_engine.scan_file(file_path, content))
             
         except Exception as e:
             logger.error(f"Error scanning {file_path}: {e}")
@@ -94,43 +85,36 @@ class ProjectScanner:
                 except Exception as e:
                     logger.error(f"File scan generated an exception: {e}")
 
-        # 4. Deduplicate Issues
-        issues = self._deduplicate_issues(issues)
-
-        # 5. LLM Verification (Optional/Selective)
-        # For high severity issues, we can ask LLM to verify
-        for issue in issues:
-            if issue.severity in ["Critical", "High"]:
-                self.llm_engine.analyze_issue(issue)
-                
+        # Deduplication is handled by LLM response structure implicitly (or we can add simple one)
+        # For now, just return issues
         return issues
 
-    def _deduplicate_issues(self, issues: List[IssueCandidate]) -> List[IssueCandidate]:
-        """
-        Deduplicate issues based on file path and line number.
-        Prioritize SAST/Taint issues over Regex issues.
-        """
-        unique_issues = {}
-        
-        for issue in issues:
-            key = (issue.file_path, issue.line_number)
-            
-            if key not in unique_issues:
-                unique_issues[key] = issue
-            else:
-                existing = unique_issues[key]
-                # If existing is Regex (starts with PY- or JS- or JV-) and new is SAST (starts with PY-AST- or PY-TAINT-), replace it
-                # Or if new has higher confidence
-                
-                is_existing_sast = "AST" in existing.rule_id or "TAINT" in existing.rule_id
-                is_new_sast = "AST" in issue.rule_id or "TAINT" in issue.rule_id
-                
-                if not is_existing_sast and is_new_sast:
-                    unique_issues[key] = issue
-                elif is_existing_sast and not is_new_sast:
-                    continue # Keep existing SAST
-                else:
-                    # Both are same type, keep the one with higher severity or just first one
-                    pass
-                    
-        return list(unique_issues.values())
+    # def _deduplicate_issues(self, issues: List[IssueCandidate]) -> List[IssueCandidate]:
+    #     """
+    #     Deduplicate issues based on file path and line number.
+    #     Prioritize SAST/Taint issues over Regex issues.
+    #     """
+    #     unique_issues = {}
+    #     
+    #     for issue in issues:
+    #         key = (issue.file_path, issue.line_number)
+    #         
+    #         if key not in unique_issues:
+    #             unique_issues[key] = issue
+    #         else:
+    #             existing = unique_issues[key]
+    #             # If existing is Regex (starts with PY- or JS- or JV-) and new is SAST (starts with PY-AST- or PY-TAINT-), replace it
+    #             # Or if new has higher confidence
+    #             
+    #             is_existing_sast = "AST" in existing.rule_id or "TAINT" in existing.rule_id
+    #             is_new_sast = "AST" in issue.rule_id or "TAINT" in issue.rule_id
+    #             
+    #             if not is_existing_sast and is_new_sast:
+    #                 unique_issues[key] = issue
+    #             elif is_existing_sast and not is_new_sast:
+    #                 continue # Keep existing SAST
+    #             else:
+    #                 # Both are same type, keep the one with higher severity or just first one
+    #                 pass
+    #                 
+    #     return list(unique_issues.values())

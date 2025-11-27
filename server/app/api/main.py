@@ -5,8 +5,8 @@ from typing import Optional
 import os
 import time
 import logging
-from vulnora.core.scanner import ProjectScanner
-from vulnora.models.issue import ScanResult
+from app.core.scanner import ProjectScanner
+from app.models.issue import ScanResult
 
 # Configure logging
 logging.basicConfig(
@@ -16,7 +16,7 @@ logging.basicConfig(
         logging.StreamHandler()
     ]
 )
-logger = logging.getLogger("vulnora.api")
+logger = logging.getLogger("app.api")
 
 app = FastAPI(title="Vulnora AI API", version="1.0.0")
 

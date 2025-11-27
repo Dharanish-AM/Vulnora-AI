@@ -5,7 +5,7 @@ import sys
 
 def start_api():
     """Start the FastAPI backend."""
-    uvicorn.run("vulnora.api.main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("app.api.main:app", host="0.0.0.0", port=8000, reload=True)
 
 
 def main():
@@ -22,7 +22,7 @@ def main():
             print("Error: --path is required for scan mode")
             sys.exit(1)
         
-        from vulnora.core.scanner import ProjectScanner
+        from app.core.scanner import ProjectScanner
         print(f"Scanning {args.path}...")
         
         try:

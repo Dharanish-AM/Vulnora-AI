@@ -23,24 +23,24 @@ const LandingPage = ({ onStart }) => {
           </span>
           v2.0 Now Available
         </div>
-        
+
         <h1 className="text-5xl md:text-7xl font-bold text-[var(--text-main)] tracking-tight">
           See the <span className="text-[var(--color-primary)]">Unseen</span>
         </h1>
-        
+
         <p className="text-lg md:text-xl text-[var(--text-muted)] max-w-2xl mx-auto leading-relaxed">
-          Advanced AI-powered security analysis for your code. Detect vulnerabilities, 
+          Advanced AI-powered security analysis for your code. Detect vulnerabilities,
           understand risks, and fix issues before they deploy.
         </p>
-        
+
         <div className="pt-4">
           <button
             onClick={onStart}
-            className="group relative inline-flex items-center justify-center px-8 py-4 font-semibold text-white transition-all duration-200 bg-[var(--color-primary)] rounded-full hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600"
+            className="group relative inline-flex items-center justify-center px-8 py-4 font-semibold text-[var(--text-on-primary)] transition-all duration-200 bg-[var(--color-primary)] rounded-full hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-primary)]"
           >
             Get Started
             <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-            <div className="absolute inset-0 rounded-full ring-2 ring-white/20 group-hover:ring-white/40 transition-all" />
+            <div className="absolute inset-0 rounded-full ring-2 ring-[var(--text-on-primary)]/20 group-hover:ring-[var(--text-on-primary)]/40 transition-all" />
           </button>
         </div>
       </div>

@@ -93,7 +93,7 @@ const ScanForm = ({ onScan, isLoading, initialPath = '' }) => {
           <button
             type="submit"
             disabled={isLoading || !path}
-            className="h-[42px] px-6 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--bg-main)] font-medium text-sm shadow-sm hover:shadow transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 rounded-lg"
+            className="h-[42px] px-6 bg-[var(--color-primary)] hover:opacity-90 text-[var(--text-on-primary)] font-medium text-sm shadow-sm hover:shadow transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 rounded-lg"
           >
             {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Start Scan'}
           </button>

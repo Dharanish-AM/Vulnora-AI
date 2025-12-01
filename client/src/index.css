@@ -7,31 +7,31 @@
 }
 
 :root {
-  /* Clean Black & White Theme - Light Mode */
+  /* Black & White Theme - Light Mode */
   --color-primary: #000000; /* Black */
-  --color-primary-hover: #333333; /* Dark Gray */
-  --color-secondary: #333333; /* Dark Gray */
-  --color-accent: #666666; /* Medium Gray */
+  --color-secondary: #333333; /* Dark Grey */
+  --color-accent: #666666; /* Medium Grey */
   
   --bg-main: #FFFFFF; /* White */
-  --bg-card: #FFFFFF; /* White */
+  --bg-card: #FFFFFF;
   --text-main: #000000; /* Black */
-  --text-muted: #666666; /* Gray */
-  --border-color: #E5E5E5; /* Light Gray */
+  --text-muted: #666666; /* Grey */
+  --text-on-primary: #FFFFFF; /* White text on Black primary */
+  --border-color: #E5E5E5; /* Light Grey */
 }
 
 .dark {
-  /* Clean Black & White Theme - Dark Mode */
+  /* Black & White Theme - Dark Mode */
   --bg-main: #000000; /* Black */
-  --bg-card: #111111; /* Very Dark Gray */
+  --bg-card: #111111; /* Very Dark Grey */
   --text-main: #FFFFFF; /* White */
-  --text-muted: #A3A3A3; /* Light Gray */
-  --border-color: #333333; /* Dark Gray */
+  --text-muted: #999999; /* Light Grey */
+  --text-on-primary: #000000; /* Black text on White primary */
+  --border-color: #333333; /* Dark Grey */
   
   --color-primary: #FFFFFF; /* White */
-  --color-primary-hover: #E5E5E5; /* Light Gray */
-  --color-secondary: #E5E5E5; /* Light Gray */
-  --color-accent: #A3A3A3; /* Gray */
+  --color-secondary: #CCCCCC; /* Light Grey */
+  --color-accent: #999999; /* Grey */
 }
 
 body {

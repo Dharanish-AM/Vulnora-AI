@@ -43,7 +43,7 @@ function App() {
         <header className="mb-10 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="bg-[var(--color-primary)] p-2 rounded-lg">
-              <Shield className="w-6 h-6 text-[var(--bg-main)]" />
+              <Shield className="w-6 h-6 text-[var(--text-on-primary)]" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-[var(--text-main)] tracking-tight">
@@ -58,7 +58,7 @@ function App() {
                 setShowLanding(false);
                 setResult(null);
               }}
-              className={`text-sm font-medium transition-colors ${!showHistory && !showLanding ? 'text-[var(--color-primary)]' : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'}`}
+              className={`text-sm font-medium transition-colors ${!showHistory && !showLanding ? 'text-[var(--text-main)] underline underline-offset-4' : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'}`}
             >
               New Scan
             </button>
@@ -67,7 +67,7 @@ function App() {
                 setShowHistory(true);
                 setShowLanding(false);
               }}
-              className={`text-sm font-medium transition-colors ${showHistory ? 'text-[var(--color-primary)]' : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'}`}
+              className={`text-sm font-medium transition-colors ${showHistory ? 'text-[var(--text-main)] underline underline-offset-4' : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'}`}
             >
               History
             </button>

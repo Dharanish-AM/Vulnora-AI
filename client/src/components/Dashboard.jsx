@@ -9,7 +9,7 @@ const MetricCard = ({ title, value, icon: Icon, color }) => (
       <p className="text-[var(--text-muted)] text-sm font-medium mb-1">{title}</p>
       <p className="text-3xl font-bold text-[var(--text-main)] tracking-tight">{value}</p>
     </div>
-    <div className={`p-3 rounded-xl ${color.bg} text-[var(--bg-main)] shadow-sm`}>
+    <div className={`p-3 rounded-xl ${color.bg} text-[var(--text-on-primary)] shadow-sm`}>
       <Icon className="w-6 h-6" />
     </div>
   </div>
@@ -49,9 +49,9 @@ const Dashboard = ({ result }) => {
 
   const severityData = [
     { name: 'Critical', count: severityCounts['Critical'] || 0, color: '#000000' }, // Black
-    { name: 'High', count: severityCounts['High'] || 0, color: '#333333' }, // Dark Gray
-    { name: 'Medium', count: severityCounts['Medium'] || 0, color: '#666666' }, // Medium Gray
-    { name: 'Low', count: severityCounts['Low'] || 0, color: '#999999' }, // Light Gray
+    { name: 'High', count: severityCounts['High'] || 0, color: '#404040' }, // Dark Grey
+    { name: 'Medium', count: severityCounts['Medium'] || 0, color: '#808080' }, // Grey
+    { name: 'Low', count: severityCounts['Low'] || 0, color: '#C0C0C0' }, // Light Grey
   ];
 
   const typeCounts = result.issues.reduce((acc, issue) => {
@@ -73,7 +73,7 @@ const Dashboard = ({ result }) => {
         <h2 className="text-2xl font-bold text-[var(--text-main)]">Scan Dashboard</h2>
         <button
           onClick={handleExport}
-          className="flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-[var(--bg-main)] rounded-lg hover:bg-[var(--color-primary-hover)] transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-[var(--text-on-primary)] rounded-lg hover:opacity-90 transition-colors"
         >
           <Download className="w-4 h-4" />
           Export PDF
@@ -85,25 +85,25 @@ const Dashboard = ({ result }) => {
           title="Total Issues"
           value={result.issues.length}
           icon={ShieldAlert}
-          color={{ bg: 'bg-[var(--color-primary)]', text: 'text-red-500' }} // Keep red for issues
+          color={{ bg: 'bg-[var(--color-primary)]', text: 'text-[var(--text-on-primary)]' }}
         />
         <MetricCard
           title="Smell Score"
           value={result.smell_score}
           icon={Activity}
-          color={{ bg: 'bg-[var(--color-primary)]', text: 'text-[var(--text-main)]' }} // Use theme accent
+          color={{ bg: 'bg-[var(--color-primary)]', text: 'text-[var(--text-on-primary)]' }}
         />
         <MetricCard
           title="Files Scanned"
           value={result.files_scanned}
           icon={FileCode}
-          color={{ bg: 'bg-[var(--color-primary)]', text: 'text-white' }} // Use theme primary
+          color={{ bg: 'bg-[var(--color-primary)]', text: 'text-[var(--text-on-primary)]' }}
         />
         <MetricCard
           title="Scan Duration"
           value={`${result.scan_duration}s`}
           icon={Clock}
-          color={{ bg: 'bg-[var(--color-primary)]', text: 'text-white' }} // Use theme secondary
+          color={{ bg: 'bg-[var(--color-primary)]', text: 'text-[var(--text-on-primary)]' }}
         />
       </div>
 

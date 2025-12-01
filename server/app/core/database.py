@@ -47,18 +47,8 @@ class Database:
                         description TEXT,
                         snippet TEXT,
                         suggested_fix TEXT,
+                        rule_id TEXT,
                         FOREIGN KEY (scan_id) REFERENCES scans (id)
-                    )
-                """)
-
-                # File Hashes table for Incremental Scanning
-                cursor.execute("""
-                    CREATE TABLE IF NOT EXISTS file_hashes (
-                        project_path TEXT NOT NULL,
-                        file_path TEXT NOT NULL,
-                        file_hash TEXT NOT NULL,
-                        last_scan_id INTEGER,
-                        PRIMARY KEY (project_path, file_path)
                     )
                 """)
                 
@@ -66,34 +56,6 @@ class Database:
                 logger.info(f"Database initialized at {self.db_path}")
         except Exception as e:
             logger.error(f"Failed to initialize database: {e}")
-
-    def get_file_hash(self, project_path: str, file_path: str) -> Optional[str]:
-        """Get the stored hash for a file."""
-        try:
-            with self._get_connection() as conn:
-                cursor = conn.cursor()
-                cursor.execute(
-                    "SELECT file_hash FROM file_hashes WHERE project_path = ? AND file_path = ?", 
-                    (project_path, file_path)
-                )
-                row = cursor.fetchone()
-                return row['file_hash'] if row else None
-        except Exception as e:
-            logger.error(f"Failed to get file hash: {e}")
-            return None
-
-    def update_file_hash(self, project_path: str, file_path: str, file_hash: str, scan_id: int):
-        """Update the stored hash for a file."""
-        try:
-            with self._get_connection() as conn:
-                cursor = conn.cursor()
-                cursor.execute("""
-                    INSERT OR REPLACE INTO file_hashes (project_path, file_path, file_hash, last_scan_id)
-                    VALUES (?, ?, ?, ?)
-                """, (project_path, file_path, file_hash, scan_id))
-                conn.commit()
-        except Exception as e:
-            logger.error(f"Failed to update file hash: {e}")
 
     def save_scan(self, project_path: str, scan_data: Dict[str, Any]) -> int:
         """Save a scan result and return the scan ID."""
@@ -125,8 +87,8 @@ class Database:
                     cursor.execute("""
                         INSERT INTO issues (
                             scan_id, file_path, line_number, severity, 
-                            vulnerability_type, description, snippet, suggested_fix
-                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                            vulnerability_type, description, snippet, suggested_fix, rule_id
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """, (
                         scan_id,
                         issue.get("file_path", ""),
@@ -135,7 +97,8 @@ class Database:
                         issue.get("vulnerability_type", "Unknown"),
                         issue.get("description", ""),
                         issue.get("snippet", ""),
-                        issue.get("suggested_fix", "")
+                        issue.get("suggested_fix", ""),
+                        issue.get("rule_id", "")
                     ))
                 
                 conn.commit()

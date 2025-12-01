@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Search, Loader2, ChevronDown, FolderOpen } from 'lucide-react';
 
-const ScanForm = ({ onScan, isLoading }) => {
-  const [path, setPath] = useState('');
+const ScanForm = ({ onScan, isLoading, initialPath = '' }) => {
+  const [path, setPath] = useState(initialPath);
   const [model, setModel] = useState('llama3.1:8b');
   const fileInputRef = React.useRef(null);
 
@@ -28,9 +28,9 @@ const ScanForm = ({ onScan, isLoading }) => {
       const relativePath = files[0].webkitRelativePath;
       const folderPath = relativePath.substring(0, relativePath.indexOf('/'));
       setPath(folderPath); // This will be the folder name, not absolute path.
-                           // For a real application, you'd need a backend to resolve this.
-                           // For now, we'll assume the user understands this limitation or
-                           // will manually enter the absolute path if needed.
+      // For a real application, you'd need a backend to resolve this.
+      // For now, we'll assume the user understands this limitation or
+      // will manually enter the absolute path if needed.
     }
   };
 
@@ -40,7 +40,7 @@ const ScanForm = ({ onScan, isLoading }) => {
         <Search className="w-5 h-5 text-[var(--color-primary)]" />
         New Scan
       </h2>
-      
+
       <form onSubmit={handleSubmit} className="flex flex-col lg:flex-row gap-4">
         <div className="flex-grow space-y-1.5">
           <label className="block text-sm font-medium text-[var(--text-main)] ml-1">Project Path</label>
@@ -70,7 +70,7 @@ const ScanForm = ({ onScan, isLoading }) => {
             </button>
           </div>
         </div>
-        
+
         <div className="lg:w-64 space-y-1.5">
           <label className="block text-sm font-medium text-[var(--text-main)] ml-1">LLM Model</label>
           <div className="relative">
@@ -88,7 +88,7 @@ const ScanForm = ({ onScan, isLoading }) => {
             </div>
           </div>
         </div>
-        
+
         <div className="flex items-end">
           <button
             type="submit"

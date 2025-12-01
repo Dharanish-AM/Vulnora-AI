@@ -7,6 +7,9 @@ import time
 import logging
 from app.core.scanner import ProjectScanner
 from app.models.issue import ScanResult
+from app.core.database import Database
+from app.core.reporter import PDFReporter
+from fastapi.responses import FileResponse
 
 # Configure logging
 logging.basicConfig(
@@ -19,6 +22,8 @@ logging.basicConfig(
 logger = logging.getLogger("app.api")
 
 app = FastAPI(title="Vulnora AI API", version="1.0.0")
+db = Database()
+reporter = PDFReporter()
 
 app.add_middleware(
     CORSMiddleware,
@@ -66,7 +71,7 @@ def scan_project(request: ScanRequest):
         logger.info(f"✅ Scan completed in {duration:.2f}s")
         logger.info(f"📊 Results: {len(issues)} issues found. Smell Score: {smell_score:.2f}")
         
-        return ScanResult(
+        result = ScanResult(
             project_path=request.path,
             issues=issues,
             smell_score=round(smell_score, 2),
@@ -74,6 +79,44 @@ def scan_project(request: ScanRequest):
             files_scanned=total_files
         )
         
+        # Save to database
+        scan_id = db.save_scan(request.path, result.dict())
+        result.scan_id = scan_id
+        logger.info(f"💾 Saved scan result with ID: {scan_id}")
+        
+        return result
+        
     except Exception as e:
         logger.exception(f"Scan failed: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Scan failed: {str(e)}")
+
+@app.get("/history")
+def get_history():
+    """Get scan history."""
+    return db.get_all_scans()
+
+@app.get("/history/{scan_id}")
+def get_scan_details(scan_id: int):
+    """Get details of a specific scan."""
+    scan = db.get_scan_details(scan_id)
+    if not scan:
+        raise HTTPException(status_code=404, detail="Scan not found")
+    return scan
+
+@app.get("/export/{scan_id}")
+def export_report(scan_id: int):
+    """Generate and download a PDF report for a scan."""
+    scan = db.get_scan_details(scan_id)
+    if not scan:
+        raise HTTPException(status_code=404, detail="Scan not found")
+    
+    try:
+        report_path = reporter.generate_report(scan)
+        return FileResponse(
+            report_path, 
+            media_type="application/pdf", 
+            filename=os.path.basename(report_path)
+        )
+    except Exception as e:
+        logger.error(f"Failed to generate report: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate report")

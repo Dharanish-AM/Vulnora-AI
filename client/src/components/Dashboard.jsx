@@ -1,5 +1,6 @@
 import React from 'react';
-import { ShieldAlert, FileCode, Clock, Activity } from 'lucide-react';
+import axios from 'axios';
+import { ShieldAlert, FileCode, Clock, Activity, Download } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 const MetricCard = ({ title, value, icon: Icon, color }) => (
@@ -16,6 +17,29 @@ const MetricCard = ({ title, value, icon: Icon, color }) => (
 
 const Dashboard = ({ result }) => {
   if (!result) return null;
+
+  const handleExport = async () => {
+    if (!result.scan_id) {
+      alert('Scan ID not found. Please save the scan first.');
+      return;
+    }
+    try {
+      const response = await axios.get(`http://localhost:8000/export/${result.scan_id}`, {
+        responseType: 'blob',
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `vulnora_report_${result.scan_id}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      console.error('Export failed:', err);
+      alert('Failed to export report');
+    }
+  };
 
   // Process data for charts
   const severityCounts = result.issues.reduce((acc, issue) => {
@@ -45,6 +69,17 @@ const Dashboard = ({ result }) => {
 
   return (
     <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-[var(--text-main)]">Scan Dashboard</h2>
+        <button
+          onClick={handleExport}
+          className="flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-secondary)] transition-colors"
+        >
+          <Download className="w-4 h-4" />
+          Export PDF
+        </button>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard
           title="Total Issues"

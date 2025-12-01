@@ -15,6 +15,7 @@ class IssueCandidate(BaseModel):
     fix_theory: Optional[str] = None
 
 class ScanResult(BaseModel):
+    scan_id: Optional[int] = None
     project_path: str
     issues: List[IssueCandidate]
     smell_score: float = 0.0

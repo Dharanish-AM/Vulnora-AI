@@ -4,12 +4,14 @@ import { Shield, Sun, Moon } from 'lucide-react';
 import ScanForm from './components/ScanForm';
 import Dashboard from './components/Dashboard';
 import VulnerabilityList from './components/VulnerabilityList';
+import History from './components/History';
 import { useTheme } from './context/ThemeContext';
 
 import LandingPage from './components/LandingPage';
 
 function App() {
   const [showLanding, setShowLanding] = useState(true);
+  const [showHistory, setShowHistory] = useState(false);
   const [result, setResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -49,21 +51,51 @@ function App() {
               </h1>
             </div>
           </div>
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-lg text-[var(--text-muted)] hover:bg-[var(--border-color)] transition-colors"
-          >
-            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-          </button>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => {
+                setShowHistory(false);
+                setShowLanding(false);
+                setResult(null);
+              }}
+              className={`text-sm font-medium transition-colors ${!showHistory && !showLanding ? 'text-[var(--color-primary)]' : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'}`}
+            >
+              New Scan
+            </button>
+            <button
+              onClick={() => {
+                setShowHistory(true);
+                setShowLanding(false);
+              }}
+              className={`text-sm font-medium transition-colors ${showHistory ? 'text-[var(--color-primary)]' : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'}`}
+            >
+              History
+            </button>
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg text-[var(--text-muted)] hover:bg-[var(--border-color)] transition-colors"
+            >
+              {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
+          </div>
         </header>
 
         {/* Main Content */}
         <main>
           {showLanding ? (
             <LandingPage onStart={() => setShowLanding(false)} />
+          ) : showHistory ? (
+            <History onLoadScan={(scanData) => {
+              setResult(scanData);
+              setShowHistory(false);
+            }} />
           ) : (
             <div className="animate-in fade-in slide-in-from-bottom-8 duration-500">
-              <ScanForm onScan={handleScan} isLoading={isLoading} />
+              <ScanForm
+                onScan={handleScan}
+                isLoading={isLoading}
+                initialPath={result?.project_path}
+              />
 
               {error && (
                 <div className="bg-red-500/10 border border-red-500/50 text-red-400 p-4 rounded-lg mb-8">
@@ -80,8 +112,8 @@ function App() {
             </div>
           )}
         </main>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }
 

@@ -9,7 +9,7 @@ const MetricCard = ({ title, value, icon: Icon, color }) => (
       <p className="text-[var(--text-muted)] text-sm font-medium mb-1">{title}</p>
       <p className="text-3xl font-bold text-[var(--text-main)] tracking-tight">{value}</p>
     </div>
-    <div className={`p-3 rounded-xl ${color.bg} text-white shadow-sm`}>
+    <div className={`p-3 rounded-xl ${color.bg} text-[var(--bg-main)] shadow-sm`}>
       <Icon className="w-6 h-6" />
     </div>
   </div>
@@ -48,10 +48,10 @@ const Dashboard = ({ result }) => {
   }, {});
 
   const severityData = [
-    { name: 'Critical', count: severityCounts['Critical'] || 0, color: '#6B3F69' }, // Deep Purple for critical
-    { name: 'High', count: severityCounts['High'] || 0, color: '#8D5F8C' }, // Medium Purple for high
-    { name: 'Medium', count: severityCounts['Medium'] || 0, color: '#A376A2' }, // Light Purple for medium
-    { name: 'Low', count: severityCounts['Low'] || 0, color: '#DDC3C3' }, // Dusty Rose for low
+    { name: 'Critical', count: severityCounts['Critical'] || 0, color: '#000000' }, // Black
+    { name: 'High', count: severityCounts['High'] || 0, color: '#333333' }, // Dark Gray
+    { name: 'Medium', count: severityCounts['Medium'] || 0, color: '#666666' }, // Medium Gray
+    { name: 'Low', count: severityCounts['Low'] || 0, color: '#999999' }, // Light Gray
   ];
 
   const typeCounts = result.issues.reduce((acc, issue) => {
@@ -64,8 +64,8 @@ const Dashboard = ({ result }) => {
     value: typeCounts[key],
   }));
 
-  // Purple theme colors for charts
-  const COLORS = ['#6B3F69', '#8D5F8C', '#A376A2', '#DDC3C3', '#2D1A2C'];
+  // Monochrome theme colors for charts
+  const COLORS = ['#000000', '#333333', '#666666', '#999999', '#CCCCCC'];
 
   return (
     <div className="space-y-6">
@@ -73,7 +73,7 @@ const Dashboard = ({ result }) => {
         <h2 className="text-2xl font-bold text-[var(--text-main)]">Scan Dashboard</h2>
         <button
           onClick={handleExport}
-          className="flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-secondary)] transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-[var(--bg-main)] rounded-lg hover:bg-[var(--color-primary-hover)] transition-colors"
         >
           <Download className="w-4 h-4" />
           Export PDF

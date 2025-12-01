@@ -7,29 +7,31 @@
 }
 
 :root {
-  /* Purple Theme - Light Mode */
-  --color-primary: #6B3F69; /* Deep Purple */
-  --color-secondary: #2D1A2C; /* Darker Deep Purple */
-  --color-accent: #A376A2; /* Light Purple */
+  /* Clean Black & White Theme - Light Mode */
+  --color-primary: #000000; /* Black */
+  --color-primary-hover: #333333; /* Dark Gray */
+  --color-secondary: #333333; /* Dark Gray */
+  --color-accent: #666666; /* Medium Gray */
   
-  --bg-main: #FAF5F8; /* Very light purple tint */
-  --bg-card: #FFFFFF;
-  --text-main: #1A0F19; /* Deepest Purple */
-  --text-muted: #6B3F69; /* Deep Purple */
-  --border-color: #DDC3C3; /* Dusty Rose */
+  --bg-main: #FFFFFF; /* White */
+  --bg-card: #FFFFFF; /* White */
+  --text-main: #000000; /* Black */
+  --text-muted: #666666; /* Gray */
+  --border-color: #E5E5E5; /* Light Gray */
 }
 
 .dark {
-  /* Purple Theme - Dark Mode */
-  --bg-main: #1A0F19; /* Deepest Purple */
-  --bg-card: #2D1A2C; /* Darker Deep Purple */
-  --text-main: #FAF5F8; /* Light Purple Tint */
-  --text-muted: #A376A2; /* Light Purple */
-  --border-color: #6B3F69; /* Deep Purple */
+  /* Clean Black & White Theme - Dark Mode */
+  --bg-main: #000000; /* Black */
+  --bg-card: #111111; /* Very Dark Gray */
+  --text-main: #FFFFFF; /* White */
+  --text-muted: #A3A3A3; /* Light Gray */
+  --border-color: #333333; /* Dark Gray */
   
-  --color-primary: #A376A2; /* Light Purple */
-  --color-secondary: #FAF5F8;
-  --color-accent: #8D5F8C; /* Medium Purple */
+  --color-primary: #FFFFFF; /* White */
+  --color-primary-hover: #E5E5E5; /* Light Gray */
+  --color-secondary: #E5E5E5; /* Light Gray */
+  --color-accent: #A3A3A3; /* Gray */
 }
 
 body {

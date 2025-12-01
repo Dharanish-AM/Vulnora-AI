@@ -43,7 +43,7 @@ function App() {
         <header className="mb-10 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="bg-[var(--color-primary)] p-2 rounded-lg">
-              <Shield className="w-6 h-6 text-white" />
+              <Shield className="w-6 h-6 text-[var(--bg-main)]" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-[var(--text-main)] tracking-tight">

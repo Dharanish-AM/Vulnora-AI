@@ -111,10 +111,10 @@ const History = ({ onLoadScan }) => {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                        ${scan.smell_score > 50 ? 'bg-red-100 text-red-800' :
-                                                    scan.smell_score > 20 ? 'bg-yellow-100 text-yellow-800' :
-                                                        'bg-green-100 text-green-800'}`}>
+                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border
+                        ${scan.smell_score > 50 ? 'bg-white text-black border-black' :
+                                                    scan.smell_score > 20 ? 'bg-gray-100 text-gray-800 border-gray-300' :
+                                                        'bg-white text-gray-600 border-gray-200'}`}>
                                                 {scan.smell_score.toFixed(1)}
                                             </span>
                                         </td>

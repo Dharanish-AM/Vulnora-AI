@@ -74,7 +74,7 @@ class ProjectScanner:
         
         # Use ThreadPoolExecutor for parallel scanning
         # Adjust max_workers based on CPU cores or I/O bound nature
-        with concurrent.futures.ThreadPoolExecutor() as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
             future_to_file = {executor.submit(self._scan_file_worker, fp): fp for fp in self.files_to_scan}
             
             for future in concurrent.futures.as_completed(future_to_file):

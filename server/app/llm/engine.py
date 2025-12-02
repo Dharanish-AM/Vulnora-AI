@@ -1,4 +1,5 @@
 import os
+import re
 import logging
 from typing import Optional, Dict
 from app.models.issue import IssueCandidate
@@ -21,21 +22,55 @@ class LLMEngine:
                 "stream": False,
                 "options": {
                     "temperature": 0.2,
-                    "num_predict": 512
+                    "num_predict": 4096
                 }
             }
-            response = requests.post(self.api_url, json=payload, timeout=30)
+            response = requests.post(self.api_url, json=payload, timeout=120)
             response.raise_for_status()
             return response.json().get("response", "").strip()
         except Exception as e:
             logger.error(f"Ollama API call failed: {e}")
             return ""
 
+    def _clean_json_response(self, response: str) -> str:
+        """
+        Clean up the LLM response to ensure it's valid JSON.
+        Handles markdown code blocks, conversational text, and invalid escape sequences.
+        """
+        if not response:
+            return ""
+            
+        # Try to extract JSON from markdown code blocks
+        code_block_pattern = r"```(?:json)?\s*(.*?)```"
+        match = re.search(code_block_pattern, response, re.DOTALL)
+        if match:
+            clean_response = match.group(1).strip()
+        else:
+            # If no code block, try to find the first [ and last ]
+            start = response.find('[')
+            end = response.rfind(']')
+            if start != -1 and end != -1 and end > start:
+                clean_response = response[start:end+1]
+            else:
+                clean_response = response.strip()
+        
+        # Fix invalid escape sequences
+        # This regex matches valid escapes: \", \\, \/, \b, \f, \n, \r, \t, \uXXXX
+        # It captures valid escapes in group 1, and invalid backslashes in group 2
+        pattern = r'(\\(?:["\\/bfnrt]|u[0-9a-fA-F]{4}))|(\\)'
+        
+        def replace_match(match):
+            if match.group(1):
+                return match.group(1)
+            return "\\\\"
+            
+        return re.sub(pattern, replace_match, clean_response)
+
     def scan_file(self, file_path: str, content: str) -> list[IssueCandidate]:
         """
         Scan a file for vulnerabilities using the LLM.
         """
-        prompt = f"""You are an elite security researcher and code auditor. Perform a comprehensive security analysis of the following code.
+        prompt = f"""Analyze this code for security vulnerabilities.
 File: {file_path}
 
 Code:
@@ -44,31 +79,24 @@ Code:
 ```
 
 Instructions:
-1.  **Analyze Deeply**: Look beyond surface-level issues. Consider logic flaws, race conditions, and complex interaction bugs.
-2.  **Identify ALL Issues**: Detect vulnerabilities across these categories:
-    *   **OWASP Top 10** (Injection, Broken Auth, XSS, IDOR, etc.)
-    *   **CWE Top 25** (Memory safety, OOB read/write, etc.)
-    *   **Secrets**: Hardcoded API keys, passwords, tokens, private keys.
-    *   **Logic Bugs**: Business logic errors, bypasses, pricing manipulation.
-    *   **Configuration**: Insecure defaults, missing security headers (if applicable).
-    *   **Bad Practices**: Use of deprecated/unsafe functions, poor error handling.
-3.  **Provide Detailed Fixes**: For each issue, explain *why* it is dangerous and *how* to fix it properly.
+1. Identify security issues (OWASP Top 10, CWE Top 25, Secrets, Logic Bugs).
+2. Be concise. Focus on high-confidence issues.
+3. Return a JSON array.
 
-Format your response as a JSON array of objects. Do NOT include any text outside the JSON.
-Example format:
+Format:
 [
     {{
-        "type": "SQL Injection",
-        "severity": "Critical",
-        "line": 10,
-        "description": "User input is directly concatenated into a SQL query, allowing an attacker to manipulate the query structure.",
-        "vulnerable_code": "query = 'SELECT * FROM users WHERE name = ' + user_input",
-        "fix_theory": "Parameterized queries (prepared statements) ensure that the database treats user input as data, not executable code, effectively neutralizing the injection attack.",
-        "fixed_code": "cursor.execute('SELECT * FROM users WHERE name = ?', (user_input,))"
+        "type": "Vulnerability Type",
+        "severity": "Critical/High/Medium/Low",
+        "line": <line_number>,
+        "description": "Brief explanation of the risk.",
+        "vulnerable_code": "The exact code snippet.",
+        "fix_theory": "Brief explanation of the fix.",
+        "fixed_code": "Secure code snippet."
     }}
 ]
 
-If no vulnerabilities are found, return an empty array: []
+Return [] if no issues found.
 """
         
         logger.info(f"🤖 Analyzing {file_path} with {self.provider}...")
@@ -83,14 +111,8 @@ If no vulnerabilities are found, return an empty array: []
             return issues
 
         try:
-            # Clean up response if it contains markdown code blocks
-            clean_response = response.strip()
-            if clean_response.startswith("```json"):
-                clean_response = clean_response[7:]
-            if clean_response.startswith("```"):
-                clean_response = clean_response[3:]
-            if clean_response.endswith("```"):
-                clean_response = clean_response[:-3]
+            # Clean up response
+            clean_response = self._clean_json_response(response)
             
             data = json.loads(clean_response)
             

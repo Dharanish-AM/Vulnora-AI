@@ -58,6 +58,20 @@ class ProjectScanner:
             # LLM Scan
             logger.debug(f"Scanning file: {file_path}")
             file_issues.extend(self.llm_engine.scan_file(file_path, content))
+            
+            # Verify issues and fetch missing fixes
+            verified_issues = []
+            for issue in file_issues:
+                verified_issue = self.llm_engine.analyze_issue(issue)
+                
+                # ALWAYS generate a dedicated patch to ensure quality
+                logger.debug(f"Generating dedicated patch for {verified_issue.rule_id}")
+                verified_issue.suggested_fix = self.llm_engine.generate_patch(verified_issue)
+                    
+                verified_issues.append(verified_issue)
+            
+            file_issues = verified_issues
+            
             logger.debug(f"Finished scanning {file_path}. Found {len(file_issues)} issues.")
             
         except Exception as e:

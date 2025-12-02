@@ -145,23 +145,20 @@ Return [] if no issues found.
         """
         Analyze an issue to verify it and provide a better description/fix.
         """
-        prompt = f"""You are a senior security engineer. Analyze this potential vulnerability.
-
-Vulnerability Type: {issue.vulnerability_type}
-File: {issue.file_path}
-Code Snippet:
+        prompt = f"""Verify this vulnerability.
+Type: {issue.vulnerability_type}
+Code:
 ```
 {issue.snippet}
 ```
 
 Task:
-1. Verify if this is a real vulnerability or a false positive.
-2. If real, explain WHY it is dangerous in 1 short sentence.
-3. If false positive, explain why.
+1. Determine if REAL or FALSE_POSITIVE.
+2. Explain briefly.
 
 Format:
 VERDICT: [REAL/FALSE_POSITIVE]
-EXPLANATION: [Your explanation]
+EXPLANATION: [Brief explanation]
 """
         
         response = self._call_ollama(prompt)
@@ -191,3 +188,37 @@ Vulnerable Code:
 Fixed Code:
 """
         return self._call_ollama(prompt)
+    
+    def _clean_code_response(self, response: str) -> str:
+        """
+        Clean up the LLM response to ensure it's valid code.
+        Handles markdown code blocks.
+        """
+        if not response:
+            return ""
+            
+        # Try to extract code from markdown code blocks
+        code_block_pattern = r"```(?:\w+)?\s*(.*?)```"
+        match = re.search(code_block_pattern, response, re.DOTALL)
+        if match:
+            return match.group(1).strip()
+            
+        return response.strip()
+
+    def generate_patch(self, issue: IssueCandidate) -> str:
+        """
+        Generate a code patch for the issue.
+        """
+        prompt = f"""You are a security expert. Provide a secure code fix for the following vulnerability.
+Return ONLY the fixed code snippet. Do not include markdown formatting or explanations.
+Ensure the code is complete and syntactically correct for the file type.
+
+File: {issue.file_path}
+Vulnerability: {issue.vulnerability_type}
+Vulnerable Code:
+{issue.snippet}
+
+Fixed Code:
+"""
+        response = self._call_ollama(prompt)
+        return self._clean_code_response(response)

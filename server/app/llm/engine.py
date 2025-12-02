@@ -64,7 +64,19 @@ class LLMEngine:
                 return match.group(1)
             return "\\\\"
             
-        return re.sub(pattern, replace_match, clean_response)
+        clean_response = re.sub(pattern, replace_match, clean_response)
+
+        # Fix unescaped newlines in fixed_code
+        # This regex finds the fixed_code value and escapes newlines within it
+        def escape_newlines(match):
+            key = match.group(1)
+            value = match.group(2)
+            escaped_value = value.replace('\n', '\\n').replace('\r', '')
+            return f'{key}"{escaped_value}"'
+
+        clean_response = re.sub(r'("fixed_code"\s*:\s*)"((?:[^"\\]|\\.)*)"', escape_newlines, clean_response, flags=re.DOTALL)
+        
+        return clean_response
 
     def scan_file(self, file_path: str, content: str) -> list[IssueCandidate]:
         """
@@ -79,20 +91,21 @@ Code:
 ```
 
 Instructions:
-1. Identify security issues (OWASP Top 10, CWE Top 25, Secrets, Logic Bugs).
-2. Be concise. Focus on high-confidence issues.
-3. Return a JSON array.
+1. Identify REAL security vulnerabilities only (OWASP Top 10, CWE Top 25). Ignore low-risk issues.
+2. Be concise.
+3. For each issue, provide a COMPLETE, WORKING code fix in `fixed_code`.
+4. IMPORTANT: Return valid JSON. Do NOT use Python-style triple quotes for strings. Use single double quotes `"` and escape newlines `\n`.
 
 Format:
 [
     {{
         "type": "Vulnerability Type",
-        "severity": "Critical/High/Medium/Low",
+        "severity": "Critical/High/Medium",
         "line": <line_number>,
         "description": "Brief explanation of the risk.",
         "vulnerable_code": "The exact code snippet.",
         "fix_theory": "Brief explanation of the fix.",
-        "fixed_code": "Secure code snippet."
+        "fixed_code": "Complete secure code snippet. Escape newlines."
     }}
 ]
 
@@ -140,6 +153,56 @@ Return [] if no issues found.
             logger.error(f"Error processing LLM response for {file_path}: {e}")
             
         return issues
+
+    def verify_and_fix(self, issue: IssueCandidate) -> IssueCandidate:
+        """
+        Verify the issue and generate a fix in a single pass.
+        """
+        prompt = f"""Analyze this vulnerability.
+File: {issue.file_path}
+Type: {issue.vulnerability_type}
+Code:
+```
+{issue.snippet}
+```
+
+Task:
+1. Verify if REAL or FALSE_POSITIVE.
+2. Explain briefly.
+3. If REAL, provide a COMPLETE, SECURE code fix.
+
+Format (JSON):
+{{
+    "verdict": "REAL" or "FALSE_POSITIVE",
+    "explanation": "Brief explanation",
+    "fixed_code": "Complete fixed code snippet (or null if false positive)"
+}}
+"""
+        response = self._call_ollama(prompt)
+        if not response:
+            return issue
+
+        try:
+            clean_response = self._clean_json_response(response)
+            data = json.loads(clean_response)
+            
+            if data.get("verdict") == "FALSE_POSITIVE":
+                issue.confidence = "Low"
+                issue.description = f"[AI Verified: False Positive] {data.get('explanation', '')}"
+            elif data.get("verdict") == "REAL":
+                issue.confidence = "High"
+                explanation = data.get("explanation", "")
+                if explanation:
+                    issue.description = f"{issue.description} [AI Analysis: {explanation}]"
+                
+                fixed_code = data.get("fixed_code")
+                if fixed_code:
+                    issue.suggested_fix = fixed_code
+                    
+        except Exception as e:
+            logger.error(f"Error verifying issue: {e}")
+            
+        return issue
 
     def analyze_issue(self, issue: IssueCandidate) -> IssueCandidate:
         """

@@ -1,499 +1,620 @@
 # 🛡️ Vulnora AI
 
-**AI-Powered Multi-Language Security Scanner with Real-Time Vulnerability Detection**
+**AI-Powered Multi-Language Code Security Scanner with LLM-Based Vulnerability Detection**
 
-[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![React](https://img.shields.io/badge/React-19.2.0-61DAFB.svg?logo=react)](https://reactjs.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688.svg?logo=fastapi)](https://fastapi.tiangolo.com/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![Python](https://img.shields.io/badge/Python-3.10+-3776ab.svg?style=flat&logo=python)](https://www.python.org/)
+[![React](https://img.shields.io/badge/React-19+-61dafb.svg?style=flat&logo=react)](https://react.dev/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688.svg?style=flat&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Electron](https://img.shields.io/badge/Electron-Desktop-47848f.svg?style=flat&logo=electron)](https://www.electronjs.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg?style=flat)](LICENSE)
 
 ---
 
 ## 📑 Table of Contents
 
 - [Overview](#-overview)
+- [Why Vulnora AI?](#-why-vulnora-ai)
 - [Features](#-features)
 - [Tech Stack](#-tech-stack)
-- [Architecture](#-architecture)
+- [Quick Start](#-quick-start)
 - [Installation](#-installation)
-- [Environment Variables](#-environment-variables)
 - [Usage](#-usage)
-  - [CLI Mode](#cli-mode)
-  - [API Mode](#api-mode)
-  - [Web Interface](#web-interface)
-- [API Documentation](#-api-documentation)
+- [Architecture](#-architecture)
 - [Project Structure](#-project-structure)
-- [Roadmap](#-roadmap)
+- [API Reference](#-api-reference)
+- [Configuration](#-configuration)
 - [Contributing](#-contributing)
 - [License](#-license)
-- [Contact](#-contact)
 
 ---
 
 ## 🎯 Overview
 
-Vulnora AI is an **enterprise-grade, offline security scanner** that analyzes software projects for vulnerabilities using a state-of-the-art **LLM-Powered Analysis Engine**.
+Vulnora AI is an **enterprise-grade, AI-powered security scanner** that automatically analyzes code repositories for vulnerabilities. Unlike traditional static analysis tools that rely on pattern matching, Vulnora AI uses Large Language Models (LLMs) running **100% locally** to understand code semantics and detect complex security issues that traditional tools miss.
 
-### Why Vulnora AI?
+**Key Differentiators:**
+- 🧠 **Deep Code Understanding** - LLM-based analysis catches logic flaws and complex vulnerabilities
+- 🔒 **100% Offline** - Run entirely on your machine; no cloud uploads or external API calls
+- 📦 **Multi-Language** - Supports 7+ programming languages out of the box
+- ⚡ **Parallel Scanning** - Multi-threaded architecture for fast project analysis
+- 🎨 **Modern UI** - Beautiful React-based dashboard with real-time feedback
+- 📊 **Detailed Reports** - Comprehensive vulnerability reports with suggested fixes
 
-**Problem**: Traditional security scanners rely on rigid patterns (regex) that produce too many false positives and miss complex logic bugs.
+---
 
-**Solution**: Vulnora AI runs entirely on your local machine, using advanced Large Language Models (like Llama 3) to "read" and understand your code like a senior security engineer. It detects logic flaws, insecure configurations, and complex vulnerabilities that static tools miss—all while keeping your code private.
+## 🤔 Why Vulnora AI?
 
-### Who Is It For?
+### The Problem
+Traditional security scanners use rigid regex patterns and heuristics, leading to:
+- ❌ **High False Positives** - Wastes time investigating non-issues
+- ❌ **Missed Logic Bugs** - Patterns can't understand business logic flaws
+- ❌ **Limited Context** - Can't connect vulnerabilities across files
+- ❌ **Privacy Concerns** - Cloud-based tools upload your source code
 
-- **Security Engineers** - Deep dive analysis without manual review fatigue
-- **Development Teams** - Catch vulnerabilities before production
-- **Solo Developers** - Quick security audits without cloud dependencies
-- **Enterprises** - Maintain code privacy with offline scanning
+### The Solution
+Vulnora AI uses LLMs to analyze code like a seasoned security engineer:
+- ✅ **Contextual Analysis** - Understands code flow and business logic
+- ✅ **Fewer False Positives** - AI validates findings before reporting
+- ✅ **Complex Vulnerability Detection** - Finds issues traditional tools miss
+- ✅ **Complete Privacy** - Runs entirely offline with Ollama
+
+### Who Should Use Vulnora AI?
+
+| Role | Use Case |
+|------|----------|
+| **Security Engineers** | Comprehensive code audits and vulnerability assessments |
+| **Development Teams** | Pre-commit security checks and CI/CD integration |
+| **Solo Developers** | Quick local security audits for personal projects |
+| **Enterprises** | Keep source code private while maintaining security standards |
+| **Auditors** | Compliance scanning (OWASP Top 10, CWE, HIPAA, SOC 2) |
 
 ---
 
 ## ✨ Features
 
-### Core Capabilities
+### 🔍 Security Analysis
+- ✅ **Multi-Language Support**: Python, JavaScript, TypeScript, Java, Go, Rust, C/C++, HTML/CSS
+- ✅ **Comprehensive Vulnerability Detection**
+  - OWASP Top 10 vulnerabilities
+  - CWE Top 25 weaknesses
+  - Hardcoded secrets and API keys
+  - SQL injection and command injection
+  - XSS, XXE, and SSRF vulnerabilities
+  - Insecure deserialization
+  - Weak cryptographic practices
+  - Path traversal and authorization flaws
+- ✅ **Intelligent Filtering** - Smart directory exclusion (node_modules, .venv, vendor, etc.)
 
-- ✅ **Multi-Language Support** - Python, JavaScript, TypeScript, Java, Go, Rust, C/C++
-- ✅ **LLM-Powered Analysis**
-  - **Deep Contextual Understanding**: Detects logic bugs and business flow flaws
-  - **Comprehensive Detection**: OWASP Top 10, CWE Top 25, Secrets, and more
-  - **Zero False Positives**: AI validates every finding before reporting
-- ✅ **High Performance**
-  - Parallel file scanning with multi-threading
-  - Smart directory exclusion (node_modules, .venv, etc.)
-- ✅ **100% Offline & Private** - No cloud uploads, runs locally with Ollama
-- ✅ **Modern Web UI** - React-based dashboard with real-time metrics
-- ✅ **REST API** - Easy integration into existing workflows
-- ✅ **CLI Support** - Scan projects from the command line
-- ✅ **Detailed Reports** - Vulnerable code, fix theory, and ready-to-use patches
+### 🚀 Performance & Scalability
+- ✅ **Parallel Scanning** - Multi-threaded file processing
+- ✅ **Large Project Support** - Handles thousands of files efficiently
+- ✅ **Configurable Model Support** - Works with different Ollama models (Llama, Mistral, etc.)
 
-### Security Checks
+### 🎨 User Interfaces
+- ✅ **Desktop App** - Electron-based app for Windows, macOS, and Linux
+- ✅ **Web Dashboard** - React UI with real-time metrics and vulnerability overview
+- ✅ **REST API** - Programmatic access for CI/CD integration
+- ✅ **CLI Mode** - Command-line scanning for automation
 
-- 🔒 Hardcoded secrets and API keys
-- 💉 SQL injection vulnerabilities
-- 🚨 Command injection risks
-- 🔓 Insecure deserialization
-- ⚠️ XSS (Cross-Site Scripting)
-- 🛡️ Path traversal vulnerabilities
-- 🔐 Weak cryptographic practices
-- 📊 And more...
+### 📋 Reporting & Output
+- ✅ **Detailed Issue Reports** - Severity levels, confidence scores, and line numbers
+- ✅ **Code Snippets** - Context-aware vulnerable code display
+- ✅ **Suggested Fixes** - AI-generated remediation recommendations
+- ✅ **Fix Theory** - Explanations of why fixes work
+- ✅ **PDF Export** - Professional report generation (via PDFReporter)
+- ✅ **Scan History** - Track vulnerabilities over time
+
+### 🔐 Privacy & Security
+- ✅ **100% Offline** - No external API calls or cloud uploads
+- ✅ **Local LLM** - Powered by Ollama, runs on your hardware
+- ✅ **No Authentication** - No registration or login required
+- ✅ **Open Source** - Transparent codebase for security auditing
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Backend
-- **Python 3.10+** - Core scanning engine
-- **FastAPI** - REST API framework
-- **Pydantic** - Data validation
-- **Ollama** - Local LLM integration
-- **Uvicorn** - ASGI server
+- **Python 3.10+** - Core scanning and analysis engine
+- **FastAPI 0.100+** - High-performance REST API framework
+- **Pydantic 2.0+** - Data validation and serialization
+- **Ollama** - Local Large Language Model integration
+- **Uvicorn** - ASGI application server
+- **ReportLab** - PDF report generation
+- **SQLite** - Lightweight result persistence
 
 ### Frontend
-- **React 19** - UI framework
-- **Vite** - Build tool
-- **Tailwind CSS 4** - Styling
-- **Recharts** - Data visualization
-- **Monaco Editor** - Code display
-- **Axios** - HTTP client
+- **React 19+** - Modern UI framework with hooks
+- **Vite** - Lightning-fast build tool and dev server
+- **Tailwind CSS 4+** - Utility-first CSS framework
+- **Recharts** - Composable charting library for dashboards
+- **Monaco Editor** - VS Code-like code editor for snippets
+- **Axios** - Promise-based HTTP client
+- **Lucide React** - Beautiful icon library
 
-### Additional Tools
-- **Streamlit** - Alternative standalone UI
-- **Rich** - Terminal formatting
-- **Lucide React** - Icon library
+### Desktop
+- **Electron** - Cross-platform desktop application framework
+- **Electron Builder** - Automated packaging for macOS, Windows, Linux
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+- **Python 3.10+**
+- **Node.js 18+** (for development)
+- **Ollama** (download from [ollama.ai](https://ollama.ai))
+
+### 30-Second Setup
+
+1. **Start Ollama** with your preferred model:
+   ```bash
+   ollama run llama2  # or llama3, mistral, neural-chat, etc.
+   ```
+
+2. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Dharanish-AM/Vulnora-AI.git
+   cd Vulnora-AI
+   ```
+
+3. **Setup Backend**:
+   ```bash
+   cd server
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install -r requirements.txt
+   python main.py  # Starts API on http://localhost:8000
+   ```
+
+4. **Setup Frontend** (in a new terminal):
+   ```bash
+   cd client
+   npm install
+   npm run dev  # Development server on http://localhost:5173
+   ```
+
+5. **Open your browser**:
+   Navigate to `http://localhost:5173` and start scanning!
+
+---
+
+## 📖 Installation
+
+### Detailed Setup Guide
+
+#### Backend Setup
+
+1. **Create and activate virtual environment**:
+   ```bash
+   cd server
+   python -m venv venv
+   source venv/bin/activate  # macOS/Linux
+   # OR
+   venv\Scripts\activate  # Windows
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Verify installation**:
+   ```bash
+   python -m pip list | grep fastapi
+   ```
+
+#### Frontend Setup
+
+1. **Install dependencies**:
+   ```bash
+   cd client
+   npm install
+   ```
+
+2. **Build for production** (optional):
+   ```bash
+   npm run build
+   ```
+
+#### Ollama Setup
+
+1. **Install Ollama** from [ollama.ai](https://ollama.ai)
+
+2. **Start the Ollama service**:
+   ```bash
+   ollama serve
+   ```
+
+3. **In another terminal, download a model**:
+   ```bash
+   ollama pull llama2        # ~4GB
+   ollama pull neural-chat   # ~4GB (faster)
+   ollama pull llama3        # ~8GB (more accurate)
+   ```
+
+---
+
+## 🎮 Usage
+
+### Web Interface (Recommended)
+
+1. **Start backend server** (Terminal 1):
+   ```bash
+   cd server
+   python main.py
+   ```
+
+2. **Start frontend dev server** (Terminal 2):
+   ```bash
+   cd client
+   npm run dev
+   ```
+
+3. **Open browser**: Visit `http://localhost:5173`
+
+4. **Use the dashboard**:
+   - **Dashboard** - Overview of all scans and vulnerabilities
+   - **Scan Form** - Select project directory and LLM model
+   - **Results** - View vulnerabilities with details and code snippets
+   - **Patch Viewer** - Compare suggested fixes side-by-side
+   - **History** - Track scans over time
+
+### REST API
+
+**Start the API server**:
+```bash
+cd server
+python main.py
+```
+
+**Scan a project** (curl):
+```bash
+curl -X POST http://localhost:8000/scan \
+  -H "Content-Type: application/json" \
+  -d '{
+    "path": "/path/to/project",
+    "model": "llama2"
+  }'
+```
+
+**Response** (example):
+```json
+{
+  "scan_id": 1,
+  "project_path": "/path/to/project",
+  "files_scanned": 42,
+  "scan_duration": 125.5,
+  "smell_score": 7.3,
+  "issues": [
+    {
+      "file_path": "src/auth.py",
+      "line_number": 42,
+      "column": 10,
+      "rule_id": "CWE-89",
+      "vulnerability_type": "SQL Injection",
+      "severity": "CRITICAL",
+      "confidence": "HIGH",
+      "description": "Unescaped user input in SQL query",
+      "snippet": "query = f\"SELECT * FROM users WHERE id={user_id}\"",
+      "suggested_fix": "Use parameterized queries",
+      "fix_theory": "Parameterized queries prevent SQL injection..."
+    }
+  ]
+}
+```
+
+### Command Line (CLI)
+
+**Scan a project**:
+```bash
+cd server
+python main.py scan --path /path/to/project
+```
+
+**Output** (example):
+```
+[CRITICAL] CWE-89: SQL Injection - /app/db/queries.py:42
+[HIGH] CWE-89: Command Injection - /app/utils/shell.py:15
+[MEDIUM] CWE-798: Hardcoded Secret - /config/settings.py:8
+```
+
+### Desktop Application
+
+**Build the desktop app**:
+```bash
+cd client
+npm install
+npm run electron:build
+```
+
+**Outputs**:
+- macOS: `release/Vulnora AI.dmg`
+- Windows: `release/Vulnora AI.exe`
+- Linux: `release/Vulnora AI.AppImage`
 
 ---
 
 ## 🏗️ Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                     Vulnora AI System                       │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌──────────────┐      ┌──────────────┐                   │
-│  │ React Client │◄────►│  FastAPI     │                   │
-│  │   (Port      │      │  Backend     │                   │
-│  │    5173)     │      │  (Port 8000) │                   │
-│  └──────────────┘      └──────┬───────┘                   │
-│                               │                            │
-│                               ▼                            │
-│                    ┌──────────────────┐                   │
-│                    │ Scanner Engine   │                   │
-│                    │  - File Discovery│                   │
-│                    │  - Parallel Scan │                   │
-│                    └────────┬─────────┘                   │
-│                             │                              │
-│                             ▼                              │
-│                    ┌──────────────────┐                   │
-│                    │   LLM Engine     │                   │
-│                    │   (Ollama)       │                   │
-│                    │  - Analysis      │                   │
-│                    │  - Validation    │                   │
-│                    │  - Patching      │                   │
-│                    └──────────────────┘                   │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+Vulnora AI System Architecture
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+┌─────────────────────────────────────────────────────┐
+│              User Interfaces                        │
+├─────────────────────────────────────────────────────┤
+│  Desktop App (Electron) │ Web UI (React) │ API/CLI  │
+└────────────────┬────────────────────────┬───────────┘
+                 │                        │
+        ┌────────┴────────┐               │
+        │                 │               │
+┌───────▼──────────────────▼──────────────▼──────┐
+│         FastAPI Server (main.py)               │
+│  ┌──────────────────────────────────────────┐  │
+│  │  REST API Endpoints & Request Handling   │  │
+│  └──────────────────────────────────────────┘  │
+└────────────┬─────────────────────────────────┬─┘
+             │                                 │
+   ┌─────────▼──────────┐         ┌───────────▼──────┐
+   │  ProjectScanner    │         │  Database (DB)   │
+   │  - File Discovery  │         │  - Scan History  │
+   │  - Parallel Scan   │         │  - Results Cache │
+   │  - Multi-threading │         └──────────────────┘
+   └────────┬───────────┘
+            │
+   ┌────────▼──────────────┐
+   │  LLMEngine            │
+   │  - Prompt Engineering │
+   │  - Response Parsing   │
+   │  - JSON Cleaning      │
+   └────────┬──────────────┘
+            │
+   ┌────────▼──────────────┐
+   │  Ollama (Local LLM)   │
+   │  - Llama 2/3          │
+   │  - Mistral            │
+   │  - Neural Chat        │
+   └───────────────────────┘
 ```
 
-### Workflow
+### Key Components
 
-### Workflow
+**ProjectScanner** (`core/scanner.py`)
+- Recursively discovers files matching supported extensions
+- Implements intelligent directory exclusion
+- Orchestrates parallel scanning with ThreadPoolExecutor
+- Returns deduplicated vulnerability list
 
-1. **File Discovery** - Recursively scans project directories for supported files.
-2. **Parallel Analysis** - Distributes files across multiple threads for speed.
-3. **LLM Analysis** - Each file is analyzed by the local AI model for security issues.
-4. **Structured Reporting** - AI extracts vulnerable code, explains the fix theory, and generates a patch.
-5. **Result Aggregation** - Findings are compiled and returned via API.
+**LLMEngine** (`llm/engine.py`)
+- Crafts security-focused prompts for vulnerability detection
+- Calls local Ollama API with streaming support
+- Parses and cleans JSON responses
+- Handles response format validation
+
+**FastAPI Server** (`api/main.py`)
+- Provides REST endpoints for scanning and reporting
+- CORS-enabled for cross-origin requests
+- Background task support for long-running scans
+- Comprehensive error handling and logging
+
+**Database** (`core/database.py`)
+- Persistent storage of scan results
+- Query capabilities for historical analysis
+- Integration with reporting module
 
 ---
 
-## 📦 Installation
-
-### Prerequisites
-
-- **Python 3.10+** - [Download](https://www.python.org/downloads/)
-- **Node.js 18+** - [Download](https://nodejs.org/)
-- **Ollama** - [Install](https://ollama.com/)
-
-### Step 1: Clone the Repository
-
-```bash
-git clone https://github.com/Dharanish-AM/Vulnora-AI.git
-cd Vulnora-AI
-```
-
-### Step 2: Backend Setup
-
-```bash
-cd server
-python3 -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-### Step 3: Frontend Setup
-
-```bash
-cd ../client
-npm install
-```
-
-### Step 4: Install Ollama Model
-
-```bash
-ollama pull llama3.1:8b
-# Or use: llama3, mistral, codellama
-```
-
----
-
-## 🔐 Environment Variables
-
-Currently, Vulnora AI works out-of-the-box with default settings. Optional configurations:
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `OLLAMA_HOST` | Ollama API endpoint | `http://localhost:11434` |
-| `API_PORT` | FastAPI server port | `8000` |
-| `LOG_LEVEL` | Logging verbosity | `INFO` |
-
-Create a `.env` file in the `server/` directory if customization is needed.
-
----
-
-## 🚀 Usage
-
-### Desktop Application (Recommended)
-
-Run Vulnora AI as a native desktop application using Electron:
-
-**Step 1: Start the Python server**
-```bash
-# Terminal 1
-cd server
-source .venv/bin/activate
-python main.py
-```
-
-**Step 2: Launch the desktop app**
-```bash
-# Terminal 2
-cd client
-npm run electron:dev
-```
-
-The Electron window will open automatically with the full UI.
-
-**Building for Production:**
-```bash
-cd client
-npm run electron:build
-```
-
-Distributable files will be created in `client/release/` for macOS, Windows, and Linux.
-
-### Web Interface
-
-#### React Client
-
-```bash
-# Terminal 1: Start backend
-cd server
-source .venv/bin/activate
-python main.py
-
-# Terminal 2: Start frontend
-cd client
-npm run dev
-```
-
-Open `http://localhost:5173`
-
-#### Streamlit (Standalone)
-
-```bash
-cd server
-streamlit run streamlit_app.py
-```
-
-Open `http://localhost:8501`
-
-### CLI Mode
-
-Scan a project directly from the command line:
-
-```bash
-cd server
-source .venv/bin/activate
-python main.py scan --path /path/to/your/project
-```
-
-**Output:**
-```
-Scanning /path/to/your/project...
-
-Scan complete. Found 5 issues.
-[Critical] PY-AST-002: subprocess call with shell=True - vulnerable.py:14
-[High] PY-001: Hardcoded secret detected - vulnerable.py:10
-[High] JS-001: Hardcoded secret detected - vulnerable.js:2
-[Critical] JS-002: Use of eval() is dangerous - vulnerable.js:6
-[Medium] JS-003: Potential XSS via innerHTML - vulnerable.js:9
-```
-
-### API Mode
-
-Start the FastAPI backend as a standalone service:
-
-```bash
-cd server
-source .venv/bin/activate
-python main.py api
-# Or simply: python main.py
-```
-
-Server runs at `http://localhost:8000`
-
----
-
-## 📡 API Documentation
-
-### Base URL
-```
-http://localhost:8000
-```
-
-### Endpoints
-
-#### `POST /scan`
-
-Scan a project for vulnerabilities.
-
-**Request:**
-```json
-{
-  "project_path": "/absolute/path/to/project",
-  "llm_model": "gemini"
-}
-```
-
-**Response:**
-```json
-{
-  "project_path": "/path/to/project",
-  "issues": [
-    {
-      "file_path": "vulnerable.py",
-      "line_number": 14,
-      "column": 5,
-      "rule_id": "PY-AST-002",
-      "vulnerability_type": "Command Injection",
-      "severity": "Critical",
-      "description": "subprocess call with shell=True is vulnerable...",
-      "confidence": "High",
-      "snippet": "subprocess.call(cmd, shell=True)",
-      "suggested_fix": "subprocess.call(shlex.split(cmd))",
-      "fix_theory": "Use shlex.split() to safely parse commands..."
-    }
-  ],
-  "smell_score": 85.5,
-  "scan_duration": 2.34,
-  "files_scanned": 42
-}
-```
-
-#### `GET /health`
-
-Check API health status.
-
-**Response:**
-```json
-{
-  "status": "healthy",
-  "version": "1.0.0"
-}
-```
-
----
-
-## 📂 Project Structure
+## 📁 Project Structure
 
 ```
 Vulnora-AI/
-├── client/                     # React Frontend
+├── README.md                  # This file
+├── client/                    # Frontend (React + Electron)
 │   ├── src/
-│   │   ├── components/         # React components
-│   │   │   ├── Dashboard.jsx   # Metrics dashboard
-│   │   │   ├── LandingPage.jsx # Home page
-│   │   │   └── VulnerabilityList.jsx
-│   │   ├── context/            # React context
-│   │   ├── App.jsx             # Main app component
-│   │   └── index.css           # Global styles
-│   ├── package.json
-│   └── vite.config.js
+│   │   ├── components/
+│   │   │   ├── Dashboard.jsx      # Main vulnerability dashboard
+│   │   │   ├── ScanForm.jsx       # Project selection & scan initiation
+│   │   │   ├── VulnerabilityList.jsx  # Issues display with filtering
+│   │   │   ├── PatchViewer.jsx    # Side-by-side fix comparison
+│   │   │   ├── History.jsx        # Scan history and trends
+│   │   │   └── LandingPage.jsx    # Welcome/getting started
+│   │   ├── context/
+│   │   │   └── ThemeContext.jsx   # Dark/light mode state
+│   │   ├── App.jsx            # Main app wrapper
+│   │   ├── main.jsx           # React entry point
+│   │   └── index.css          # Global styles
+│   ├── electron/
+│   │   ├── main.js            # Electron main process
+│   │   └── preload.js         # Context isolation bridge
+│   ├── package.json           # Dependencies & scripts
+│   ├── vite.config.js         # Vite build configuration
+│   ├── tailwind.config.js     # Tailwind CSS setup
+│   └── electron-builder.json  # Desktop app build config
 │
-├── server/                     # Python Backend
-│   ├── main.py                 # CLI entry point
-│   ├── streamlit_app.py        # Streamlit UI
-│   ├── requirements.txt
-│   └── vulnora/                # Core package
-│       ├── api/                # FastAPI routes
-│       │   └── main.py
-│       ├── core/               # Scanning logic
-│       │   └── scanner.py      # Main scanner orchestrator
-│       ├── llm/                # LLM integration
-│       │   └── engine.py
-│       └── models/             # Data models
-│           └── issue.py
+├── server/                    # Backend (Python + FastAPI)
+│   ├── main.py               # Application entry point
+│   ├── requirements.txt       # Python dependencies
+│   ├── streamlit_app.py       # Alternative Streamlit UI
+│   └── app/
+│       ├── __init__.py
+│       ├── api/
+│       │   └── main.py        # FastAPI app & endpoints
+│       ├── core/
+│       │   ├── scanner.py     # Project scanner orchestration
+│       │   ├── database.py    # Result persistence
+│       │   └── reporter.py    # PDF report generation
+│       ├── llm/
+│       │   └── engine.py      # LLM integration & prompting
+│       └── models/
+│           └── issue.py       # Data models (IssueCandidate, ScanResult)
 │
-└── test_project/               # Test cases
-    ├── vulnerable.py
-    └── vulnerable.js
+├── test_project/             # Sample vulnerable code for testing
+│   ├── vulnerable.py
+│   └── vulnerable.js
+│
+└── .git/                      # Version control
 ```
 
 ---
 
-## 🗺️ Roadmap
+## 🔌 API Reference
 
-### ✅ Completed
-- [x] Multi-language support (Python, JS, TS, Java, Go, Rust, C/C++)
-- [x] Parallel scanning engine
-- [x] LLM integration with Ollama
-- [x] React web interface
-- [x] REST API
-- [x] CLI support
-- [x] **Electron desktop application**
+### Endpoints
 
-### 🚧 In Progress
-- [ ] GitHub Actions integration
-- [ ] Docker containerization
+#### POST `/scan`
+Initiate a security scan of a project.
 
-### 📋 Planned Features
+**Request**:
+```json
+{
+  "path": "/absolute/path/to/project",
+  "model": "llama2"
+}
+```
 
-**Q1 2025**
-- [ ] GitLab CI/CD integration
-- [ ] SARIF report format
-- [ ] Custom rule definitions
-- [ ] Severity threshold configuration
+**Response** (`ScanResult`):
+```json
+{
+  "scan_id": 1,
+  "project_path": "/path/to/project",
+  "files_scanned": 42,
+  "scan_duration": 125.5,
+  "smell_score": 7.3,
+  "issues": [
+    {
+      "file_path": "src/auth.py",
+      "line_number": 42,
+      "column": 10,
+      "rule_id": "CWE-89",
+      "vulnerability_type": "SQL Injection",
+      "severity": "CRITICAL",
+      "confidence": "HIGH",
+      "description": "Unescaped user input in SQL query...",
+      "snippet": "query = f\"SELECT * FROM users WHERE id={user_id}\"",
+      "suggested_fix": "Use parameterized queries: cursor.execute(...)",
+      "fix_theory": "Parameterized queries prevent SQL injection by..."
+    }
+  ]
+}
+```
 
-**Q2 2025**
-- [ ] Multi-repository scanning
-- [ ] Historical scan comparison
-- [ ] Automated fix suggestions (PR creation)
-- [ ] Integration with Jira/Linear
+#### GET `/`
+Health check endpoint.
 
-**Q3 2025**
-- [ ] Support for more languages (PHP, Ruby, Kotlin)
-- [ ] Machine learning-based pattern detection
-- [ ] Cloud deployment option (self-hosted)
+**Response**:
+```json
+{
+  "message": "Vulnora AI API is running"
+}
+```
+
+---
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+Create a `.env` file in the `server/` directory (optional):
+
+```env
+# Ollama Configuration
+OLLAMA_API_URL=http://localhost:11434/api/generate
+OLLAMA_MODEL=llama2
+
+# FastAPI Server
+API_HOST=0.0.0.0
+API_PORT=8000
+API_RELOAD=true
+
+# Logging
+LOG_LEVEL=INFO
+
+# Database
+DATABASE_PATH=./vulnora.db
+```
+
+### Supported LLM Models
+
+The following Ollama models are tested and recommended:
+
+| Model | Speed | Accuracy | Memory | Recommended For |
+|-------|-------|----------|--------|-----------------|
+| **Neural Chat** | ⚡⚡⚡ Fast | Good | 4-8GB | Fast scans, good balance |
+| **Llama 2** | ⚡⚡ Medium | Excellent | 8-16GB | Best accuracy |
+| **Llama 3** | ⚡⚡ Medium | Excellent | 8-16GB | Latest, improved reasoning |
+| **Mistral** | ⚡⚡⚡ Fast | Good | 4-8GB | Fast, efficient |
+| **Dolphin** | ⚡ Slow | Excellent | 16GB+ | Maximum accuracy |
+
+**Install a model**:
+```bash
+ollama run llama3          # or any other model
+ollama pull neural-chat    # Pre-download without running
+```
+
+### Scanner Configuration
+
+Edit `server/app/core/scanner.py` to customize:
+
+```python
+# Supported file extensions
+self.supported_extensions = {'.py', '.js', '.jsx', '.ts', '.tsx', '.java', '.go', '.rs'}
+
+# Directories to skip
+self.excluded_dirs = {
+    '.git', '.venv', 'node_modules', 'dist', 'build',
+    '__pycache__', 'vendor', '.idea', '.vscode'
+}
+```
 
 ---
 
 ## 🤝 Contributing
 
-We welcome contributions! Please follow these steps:
+Contributions are welcome! Here's how to get started:
 
-### How to Contribute
+1. **Fork** the repository
+2. **Create a branch**: `git checkout -b feature/your-feature`
+3. **Commit changes**: `git commit -am 'Add your feature'`
+4. **Push to branch**: `git push origin feature/your-feature`
+5. **Submit a Pull Request**
 
-1. **Fork the repository**
-   ```bash
-   git clone https://github.com/Dharanish-AM/Vulnora-AI.git
-   ```
-
-2. **Create a feature branch**
-   ```bash
-   git checkout -b feature/amazing-feature
-   ```
-
-3. **Make your changes**
-   - Follow existing code style
-   - Add tests if applicable
-   - Update documentation
-
-4. **Commit your changes**
-   ```bash
-   git commit -m "feat: add amazing feature"
-   ```
-
-5. **Push to your fork**
-   ```bash
-   git push origin feature/amazing-feature
-   ```
-
-6. **Open a Pull Request**
-
-### Development Guidelines
-
-- Write clear commit messages
-- Add tests for new features
-- Update README if needed
-- Ensure all tests pass
-- Follow Python PEP 8 and React best practices
+### Areas for Contribution
+- 🧪 Additional programming language support
+- 📈 Performance optimizations for large projects
+- 🎨 UI/UX improvements
+- 🔬 Enhanced vulnerability detection patterns
+- 📚 Documentation and tutorials
+- 🐛 Bug fixes and error handling
+- 🧵 Async processing for faster scans
 
 ---
 
-## 📄 License
+## 📝 License
 
-Distributed under the **MIT License**. See [LICENSE](LICENSE) for more information.
+Vulnora AI is licensed under the **MIT License**. See [LICENSE](LICENSE) for details.
 
 ---
 
-## 📧 Contact
+## 👤 Contact & Support
 
-**Dharanish AM**
+- **Author**: [Dharanish AM](https://github.com/Dharanish-AM)
+- **Email**: dharanish816@gmail.com
+- **GitHub**: [Vulnora-AI Repository](https://github.com/Dharanish-AM/Vulnora-AI)
+- **Issues**: [Report bugs or request features](https://github.com/Dharanish-AM/Vulnora-AI/issues)
 
-- 📧 Email: [dharanish816@gmail.com](mailto:dharanish816@gmail.com)
-- 💼 LinkedIn: [linkedin.com/in/dharanish-am](https://www.linkedin.com/in/dharanish-a-m-40a797295/)
-- 🐙 GitHub: [@Dharanish-AM](https://github.com/Dharanish-AM)
-- 🌐 Portfolio: [portfolio-amd.vercel.app](https://portfolio-amd.vercel.app/)
+---
+
+## ⭐ Star History
+
+If you find Vulnora AI useful, please give it a star! It helps others discover the project.
 
 ---
 
 <div align="center">
 
-**⭐ If you find Vulnora AI useful, please consider giving it a star!**
+**Built with ❤️ for security-conscious developers**
 
-Made with ❤️ by [Dharanish AM](https://github.com/Dharanish-AM)
+[⬆ Back to Top](#-vulnora-ai)
 
 </div>

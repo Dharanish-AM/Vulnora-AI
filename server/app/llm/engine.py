@@ -78,12 +78,21 @@ class LLMEngine:
         
         return clean_response
 
-    def scan_file(self, file_path: str, content: str) -> list[IssueCandidate]:
+    def scan_file(self, file_path: str, content: str, context: str = "") -> list[IssueCandidate]:
         """
         Scan a file for vulnerabilities using the LLM.
+        
+        Args:
+            file_path: Path to the file being scanned
+            content: File content to analyze
+            context: Optional context from static analysis (hints about suspicious lines)
+        
+        Returns:
+            List of detected vulnerabilities
         """
         prompt = f"""Analyze this code for security vulnerabilities.
 File: {file_path}
+{context}
 
 Code:
 ```
@@ -92,9 +101,10 @@ Code:
 
 Instructions:
 1. Identify REAL security vulnerabilities only (OWASP Top 10, CWE Top 25). Ignore low-risk issues.
-2. Be concise.
-3. For each issue, provide a COMPLETE, WORKING code fix in `fixed_code`.
-4. IMPORTANT: Return valid JSON. Do NOT use Python-style triple quotes for strings. Use single double quotes `"` and escape newlines `\n`.
+2. If static analysis hints are provided above, validate those findings carefully.
+3. Be concise.
+4. For each issue, provide a COMPLETE, WORKING code fix in `fixed_code`.
+5. IMPORTANT: Return valid JSON. Do NOT use Python-style triple quotes for strings. Use single double quotes `"` and escape newlines `\n`.
 
 Format:
 [

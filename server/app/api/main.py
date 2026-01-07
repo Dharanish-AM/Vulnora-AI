@@ -6,6 +6,8 @@ import os
 import time
 import logging
 from app.core.scanner import ProjectScanner
+from app.core.hybrid_scanner import HybridScanner
+from app.core.incremental_scanner import IncrementalScanner
 from app.models.issue import ScanResult
 from app.core.database import Database
 from app.core.reporter import PDFReporter
@@ -36,15 +38,27 @@ app.add_middleware(
 class ScanRequest(BaseModel):
     path: str
     model: str = "llama3.1:8b"
+    use_hybrid: bool = True  # Use hybrid scanning by default
+    use_incremental: bool = False  # Incremental scanning opt-in
+    force_full_scan: bool = False  # Force full scan even with incremental
 
 @app.get("/")
 def read_root():
-    return {"message": "Vulnora AI API is running"}
+    return {
+        "message": "Vulnora AI API is running",
+        "version": "2.0.0",
+        "features": {
+            "hybrid_scanning": True,
+            "incremental_scanning": True,
+            "static_analysis": True
+        }
+    }
 
 @app.post("/scan", response_model=ScanResult)
 def scan_project(request: ScanRequest):
     logger.info(f"🚀 Received scan request for project: {request.path}")
     logger.info(f"Using model: {request.model}")
+    logger.info(f"Hybrid scanning: {request.use_hybrid}, Incremental: {request.use_incremental}")
     
     if not os.path.exists(request.path) or not os.path.isdir(request.path):
         logger.error(f"❌ Invalid project path: {request.path}")
@@ -53,8 +67,22 @@ def scan_project(request: ScanRequest):
     start_time = time.time()
     
     try:
-        scanner = ProjectScanner(project_path=request.path, llm_model=request.model)
-        issues = scanner.scan()
+        # Choose scanner based on request
+        if request.use_hybrid:
+            scanner = HybridScanner(project_path=request.path, llm_model=request.model)
+        else:
+            # Legacy scanner for compatibility
+            scanner = ProjectScanner(project_path=request.path, llm_model=request.model)
+        
+        # Apply incremental scanning if requested
+        if request.use_incremental:
+            incremental = IncrementalScanner(project_path=request.path)
+            issues = incremental.scan_incremental(
+                scanner=scanner,
+                force_full_scan=request.force_full_scan
+            )
+        else:
+            issues = scanner.scan()
         
         # Calculate smell score (weighted risk score)
         weights = {

@@ -1,0 +1,96 @@
+{
+  "version": "1.0",
+  "last_scan": "2026-01-07T22:44:00.845854",
+  "file_hashes": {
+    "/Users/dharanisham/Developer/Github-Repositories/Vulnora-AI/test_project/vulnerable.js": "9c0fd083c5147430861b32b0316b0534233ea7714198e58418ab294cd53500f6",
+    "/Users/dharanisham/Developer/Github-Repositories/Vulnora-AI/test_project/vulnerable.py": "2ae88a20bb8abe1d2f087bbdb44cc15ca64d35cec149a36ea5bff34838d1b502"
+  },
+  "scan_results": {
+    "/Users/dharanisham/Developer/Github-Repositories/Vulnora-AI/test_project/vulnerable.py": [
+      {
+        "file_path": "/Users/dharanisham/Developer/Github-Repositories/Vulnora-AI/test_project/vulnerable.py",
+        "line_number": 7,
+        "column": 0,
+        "rule_id": "LLM-Command-Injection",
+        "vulnerability_type": "Command Injection",
+        "severity": "Critical",
+        "description": "User input is directly concatenated with a system command, allowing an attacker to inject arbitrary commands.",
+        "confidence": "Low",
+        "snippet": "os.system(\"ls \" + user_input)",
+        "suggested_fix": "import subprocess\nsubprocess.run(['ls', user_input], check=True)",
+        "fix_theory": "Use parameterized queries or whitelisting to ensure only expected inputs are executed."
+      },
+      {
+        "file_path": "/Users/dharanisham/Developer/Github-Repositories/Vulnora-AI/test_project/vulnerable.py",
+        "line_number": 14,
+        "column": 0,
+        "rule_id": "LLM-Command-Injection-via-Shell",
+        "vulnerability_type": "Command Injection via Shell",
+        "severity": "Critical",
+        "description": "The `shell=True` argument allows the execution of arbitrary shell commands, making it vulnerable to command injection attacks.",
+        "confidence": "Low",
+        "snippet": "subprocess.Popen(cmd, shell=True)",
+        "suggested_fix": "import subprocess\nsubprocess.run(['echo', user_input], check=True)",
+        "fix_theory": "Avoid using `shell=True` and instead pass a list of arguments to the subprocess."
+      },
+      {
+        "file_path": "/Users/dharanisham/Developer/Github-Repositories/Vulnora-AI/test_project/vulnerable.py",
+        "line_number": 10,
+        "column": 0,
+        "rule_id": "LLM-Hardcoded-Credentials",
+        "vulnerability_type": "Hardcoded Credentials",
+        "severity": "High",
+        "description": "The `api_key` is hardcoded, making it easily accessible to attackers.",
+        "confidence": "Low",
+        "snippet": "api_key = \"1234567890123456789012345\"",
+        "suggested_fix": "import os\napi_key = os.environ.get('API_KEY')",
+        "fix_theory": "Store sensitive credentials securely using environment variables or a secrets manager."
+      }
+    ],
+    "/Users/dharanisham/Developer/Github-Repositories/Vulnora-AI/test_project/vulnerable.js": [
+      {
+        "file_path": "/Users/dharanisham/Developer/Github-Repositories/Vulnora-AI/test_project/vulnerable.js",
+        "line_number": 2,
+        "column": 0,
+        "rule_id": "LLM-Hardcoded-Credentials",
+        "vulnerability_type": "Hardcoded Credentials",
+        "severity": "High",
+        "description": "The password 'supersecretpassword12345' is hardcoded in the script, which can lead to unauthorized access if the code is exposed.",
+        "confidence": "Low",
+        "snippet": "var password = \"supersecretpassword12345\";",
+        "suggested_fix": "const secretKey = process.env.SECRET_KEY; var password = secretKey;",
+        "fix_theory": "Store sensitive data securely using environment variables or a secure storage mechanism."
+      },
+      {
+        "file_path": "/Users/dharanisham/Developer/Github-Repositories/Vulnora-AI/test_project/vulnerable.js",
+        "line_number": 6,
+        "column": 0,
+        "rule_id": "LLM-Code-Injection",
+        "vulnerability_type": "Code Injection",
+        "severity": "Critical",
+        "description": "The eval() function is used to execute user input as JavaScript code, which can lead to arbitrary code execution and remote code injection.",
+        "confidence": "Low",
+        "snippet": "eval(userInput);",
+        "suggested_fix": "const sanitizedInput = JSON.parse(userInput);",
+        "fix_theory": "Use a safe alternative like JSON.parse() or a library like DOMPurify to sanitize user input."
+      },
+      {
+        "file_path": "/Users/dharanisham/Developer/Github-Repositories/Vulnora-AI/test_project/vulnerable.js",
+        "line_number": 9,
+        "column": 0,
+        "rule_id": "LLM-XSS-Risk",
+        "vulnerability_type": "XSS Risk",
+        "severity": "High",
+        "description": "The document.getElementById('output').innerHTML assignment can lead to cross-site scripting (XSS) attacks if user input is not properly sanitized.",
+        "confidence": "Low",
+        "snippet": "document.getElementById(\"output\").innerHTML = userInput;",
+        "suggested_fix": "const sanitizedInput = DOMPurify.sanitize(userInput); document.getElementById('output').innerHTML = sanitizedInput;",
+        "fix_theory": "Use a library like DOMPurify or sanitize the user input using a whitelist approach."
+      }
+    ]
+  },
+  "metadata": {
+    "total_scans": 2,
+    "last_scan_duration": 0
+  }
+}
